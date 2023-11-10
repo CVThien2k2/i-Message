@@ -1,16 +1,23 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const app = express();
+require('dotenv').config()
+const mongoose = require("mongoose");
+const route = require('./Routes/index.route')
+
+
+const port = process.env.PORT || 3002
 
 app.use(express.urlencoded({
     extended: true
 }));
 app.use(express.json());
 
+
+route(app);
 //configure mongoose
 const ConnectDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGODB_URI || "localhost",
+    try { 
+        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/chat',
             {
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
@@ -21,8 +28,12 @@ const ConnectDB = async () => {
         console.log(error)
     }
 }
-app.listen(3001, () => {
-    console.log("Server is running on port 3001");
+
+
+ConnectDB();
+
+app.listen(port, () => {
+    console.log("Server is running on port:"+port);
 });
 
 
