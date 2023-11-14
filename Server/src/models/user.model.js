@@ -2,31 +2,37 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-    userName: String,
+    name: { type: String, required: true, minlength: 6, maxlength: 20 },
     gender: { type: String, default: "male" },
-    numberPhone: { type: Number, default: null },
+    numberPhone: { type: Number, default: null, unique: true },
     address: { type: String, default: null },
     avatar: { type: String, default: 'avatar-default.jpg' },
-    role: { type: String, default: "user" },
-    local: {
-        email: { type: String, trim: true },
-        password: String,
-        isActive: { type: Boolean, default: false },
-        veryfyToken: String,
+    role: { type: String, default: "user" }, 
+    password: { type: String, required: true, minLength: 6, maxLength: 1000 },
+    typeLogin: {
+        type: String
     },
-    facebook: {
-        uid: String,
-        token: String,
-        email: {type: String,trim: true}
-    },
-    google: {
-        uid: String,
-        token: String,
-        email: {type: String,trim: true}
-    },
-    createdAt: {type: Number, default: Date.now},
-    updatedAt: {type: Number, default: null},
-    deletedAt: {type: Number, default: null}
-})
+    email: { type: String, trim: true, required: true, unique: true }
 
-module.exports =mongoose.model("user",UserSchema)
+    // local: {
+    //     email: { type: String, trim: true },
+    //     password: String,
+    //     isActive: { type: Boolean, default: false },
+    //     veryfyToken: String,
+    // },
+    // facebook: {
+    //     uid: String,
+    //     token: String,
+    //     email: { type: String, trim: true }
+    // },
+    // google: {
+    //     uid: String,
+    //     token: String,
+    //     email: { type: String, trim: true }
+    // }
+},
+    {
+        timestamps: true,
+    })
+
+module.exports = mongoose.model("user", UserSchema)
