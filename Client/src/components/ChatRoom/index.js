@@ -1,27 +1,21 @@
-// ChatRoom/index.js
-import React from 'react';
-import './ChatRoom.css'; // Import file CSS tùy chỉnh
+import { UserAddOutlined } from '@ant-design/icons';
+// import React, { useContext, useEffect, useRef, useState } from 'react';
+// import styled from 'styled-components';
+import { Button, Tooltip, Avatar, Form, Input, Alert } from 'antd';
 
-const ChatRoom = () => {
+import React from 'react';
+import {Row, Col} from 'antd';
+import './ChatRoom.css'; // Import file CSS tùy chỉnh
+import Sidebar from './Sidebar';
+import ChatWindow from './ChatWindow';
+
+export default function ChatRoom() {
   return (
-    <div className="chat-room">
-      <div className="chat-list">
-        <div className="chat-list-header">Danh sách đoạn chat</div>
-        <ul className="chat-list-items">
-          {/* Danh sách các đoạn chat */}
-          <li className="chat-item">Đoạn chat 1</li>
-          <li className="chat-item">Đoạn chat 2</li>
-          {/* ... */}
-        </ul>
-      </div>
-      <div className="chat-window">
-        <div className="chat-window-header">Nội dung đoạn chat</div>
-        <div className="chat-window-content">
-          {/* Nội dung đoạn chat */}
-        </div>
-      </div>
-    </div>
+    <Row>
+      <Col span={8}><Sidebar/></Col>
+      <Col span={16}><ChatWindow/></Col>
+    </Row>
   );
 };
 
-export default ChatRoom;
+
