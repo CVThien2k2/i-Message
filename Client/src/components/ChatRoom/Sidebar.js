@@ -7,8 +7,8 @@ import styled from 'styled-components'
 
 
 const StyleSidebar = styled.div`
-  background-color: #f0f2f5; /* Màu xám nhẹ */
-  color: #000000; /* Màu chữ */
+  background-color: #333333; /* Màu xám đậm */
+  color: #ffffff; /* Màu chữ */
   height: 100vh;
   padding: 20px;
 `;
