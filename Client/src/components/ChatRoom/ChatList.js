@@ -1,43 +1,54 @@
-import React from 'react';
-import { Collapse, Typography } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { List, Avatar } from 'antd';
 import styled from 'styled-components';
+import axios from 'axios';
 
-const { Panel } = Collapse;
+const ChatListWrapper = styled.div`
+  .ant-list-item {
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+  }
 
-const PanelStyled = styled(Panel)`
-  &&& {
-    .ant-typography {
-      color: white;
-    }
-
-    .ant-collapse-content-box {
-      padding: 0 40px;
-    }
+  .ant-avatar {
+    background-color: #f56a00;
+    vertical-align: middle;
   }
 `;
 
-const StyledLink = styled(Typography.Link)`
-  display: block;
-  margin-bottom: 5px;
-  color: white;
-  text-decoration: none;
-  transition: color 0.3s;
-
-  &:hover {
-    color: #1890ff; /* Màu khi hover */
-  }
-`;
+const chatData = [
+  { name: 'Test1', message: 'Hello there!' },
+  { name: 'Test2', message: 'How are you?' },
+];
 
 export default function ChatList() {
+
+  // const [chatData, setChatData] = useState([]);
+
+  // useEffect(() => {
+  //   axios.get('YOUR_BACKEND_API_ENDPOINT')
+  //     .then((response) => {
+  //       setChatData(response.data); 
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching chat data:', error);
+  //     });
+  // }, []); 
   return (
-    <Collapse ghost defaultActiveKey={['1']}>
-      <PanelStyled header="Danh sách các phòng" key="1">
-        <StyledLink>
-        <Typography style={{ color: 'white' }}>Room 1</Typography>
-        <Typography style={{ color: 'white' }}>Room 2</Typography>
-        <Typography style={{ color: 'white' }}>Room 3</Typography>
-        </StyledLink>
-      </PanelStyled>
-    </Collapse>
-  );
-}
+    <ChatListWrapper>
+    <List
+      itemLayout="horizontal"
+      dataSource={chatData}
+      renderItem={(item) => (
+        <List.Item>
+          <List.Item.Meta
+            avatar={<Avatar>{item.name.charAt(0)}</Avatar>}
+            title={item.name}
+            description={item.message}
+          />
+        </List.Item>
+      )}
+    />
+  </ChatListWrapper>
+);
+};
+

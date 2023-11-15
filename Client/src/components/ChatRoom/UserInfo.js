@@ -8,7 +8,7 @@ const WrapperStyle = styled.div`
   padding: 12px 16px;
   border-bottom: 1px solid rgba(82, 38, 83);
   color: white;
-  border-radius: 15px; /* Đường viền bo cong */
+  border-radius: 15px; 
 
   .name {
     color: white;
