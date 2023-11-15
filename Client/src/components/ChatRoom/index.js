@@ -7,7 +7,7 @@ import React from 'react';
 import { Row, Col } from 'antd';
 import './ChatRoom.css';
 import Sidebar from './SideBar/Sidebar';
-import ChatWindow from './Chat/Message';
+import ChatWindow from './Chat/ChatGroup';
 
 const ChatRoom = () => {
   return (
