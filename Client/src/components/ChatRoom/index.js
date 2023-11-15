@@ -4,18 +4,27 @@ import { UserAddOutlined } from '@ant-design/icons';
 import { Button, Tooltip, Avatar, Form, Input, Alert } from 'antd';
 
 import React from 'react';
-import {Row, Col} from 'antd';
-import './ChatRoom.css'; // Import file CSS tùy chỉnh
+import { Row, Col } from 'antd';
+import './ChatRoom.css';
 import Sidebar from './Sidebar';
 import ChatWindow from './ChatWindow';
 
-export default function ChatRoom() {
+const ChatRoom = () => {
   return (
-    <Row>
-      <Col span={8}><Sidebar/></Col>
-      <Col span={16}><ChatWindow/></Col>
-    </Row>
+    <div className="chat-room-container">
+      <Row className="full-height">
+        <Col span={8} className="full-height no-scroll">
+          <Sidebar />
+        </Col>
+        <Col span={16} className="full-height no-scroll">
+          <ChatWindow />
+        </Col>
+      </Row>
+    </div>
   );
 };
+
+export default ChatRoom;
+
 
 

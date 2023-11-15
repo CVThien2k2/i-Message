@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Row, Typography, Col } from 'antd';
+import { Button, Row, Col } from 'antd';
 import { FacebookOutlined, GoogleOutlined } from '@ant-design/icons';
 
 import './LoginPage.css'; 
