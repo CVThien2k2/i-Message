@@ -1,7 +1,7 @@
 import { Avatar, Button, Tooltip, Form } from 'antd';
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { UsergroupAddOutlined } from '@ant-design/icons';
+import { UsergroupAddOutlined, VerticalAlignTopOutlined } from '@ant-design/icons';
 import Message from './Chat';
 
 const ToolBarStyled = styled.div`
@@ -66,7 +66,7 @@ const FormStyled = styled(Form)`
   }
 
   input {
-    width: calc(100% - 40%); /* Để tạo khoảng cách cho nút Gửi */
+    width: calc(100% - 20%); /* Để tạo khoảng cách cho nút Gửi */
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -78,7 +78,28 @@ const FormStyled = styled(Form)`
   }
 `;
 
+const IconButton = styled(Button)`
+  background-color: #1890ff; /* Màu xanh */
+  border: none; /* Loại bỏ viền */
+  margin-left: 10px;
+`;
+
+
 export default function ChatWindow() {
+  const fileInputRef = useRef(null);
+
+  const handleFileUpload = (e) => {
+    const selectedFile = e.target.files[0];
+    console.log('Selected file:', selectedFile);
+    // Xử lý tập tin đã được chọn tại đây
+  };
+
+  const handleButtonClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   return (
     <WrapperStyled>
       <ToolBarStyled>
@@ -111,8 +132,15 @@ export default function ChatWindow() {
         </ChatListStyled>
         <FormStyled>
           <Form.Item>
+            <input
+                ref={fileInputRef}
+                type="file"
+                style={{ display: 'none' }}
+                onChange={handleFileUpload}
+              />
             <input placeholder='Nhập tin nhắn' bordered={false} autoComplete='off'/>
             <Button type='primary'>Gửi</Button>
+            <IconButton type='text' icon={<VerticalAlignTopOutlined />} onClick={handleButtonClick}/> 
           </Form.Item>
         </FormStyled>
         
