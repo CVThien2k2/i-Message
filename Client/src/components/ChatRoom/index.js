@@ -6,8 +6,8 @@ import { Button, Tooltip, Avatar, Form, Input, Alert } from 'antd';
 import React from 'react';
 import { Row, Col } from 'antd';
 import './ChatRoom.css';
-import Sidebar from './Sidebar';
-import ChatWindow from './ChatWindow';
+import Sidebar from './SideBar/Sidebar';
+import ChatWindow from './Chat/Message';
 
 const ChatRoom = () => {
   return (

@@ -1,13 +1,3 @@
-
-
-  .chat-name {
-    font-size: 4rem; /* Kích thước chữ Four T */
-    color: #FF6600; /* Màu chữ Four T */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Đổ bóng chữ Four T */
-    margin-bottom: 20px; /* Khoảng cách giữa chữ Four T và các nút */
-  } 
-
-
 .chat-room-container {
   height: 100vh;
   overflow: hidden;
