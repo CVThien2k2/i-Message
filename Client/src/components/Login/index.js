@@ -26,17 +26,11 @@ const LoginPage = () => {
   //       keywords: generateKeywords(user.displayName?.toLowerCase()),
   //     });
   //   }
-  const navigate = useNavigate();
+
   const handleFbLogin = () => {
     auth.signInWithPopup(fbProvider);
   }
-  
-  auth.onAuthStateChanged((user) => {
-     console.log({user});
-     if(user) {
-      navigate('/');
-     }
-  })
+
 
   return (
     <div className="login-page">     
