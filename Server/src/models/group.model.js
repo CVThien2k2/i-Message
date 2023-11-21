@@ -2,17 +2,17 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const chatGroupSchema = new Schema({
-  name: String,
-  avatar: String,
-  userCount: {type: Number, max: 50},
-  messCount:{type: Number},
-  userID: Schema.Types.ObjectId,
+  name: {type: String, default: null},
+  avatar: {type: String, default: null},
+  userCount: {type: Number, max: 50,default: 2},
+  messCount:{type: Number, default: 0},
+  // userID: Schema.Types.ObjectId,
   members: [{ type: Schema.Types.ObjectId, ref: 'user' }],
-  createdAt: {type: Number, default: Date.now},
-  updatedAt: {type: Number, default: null},
-  deletedAt: {type: Number, default: null}
+},
+{
+    timestamps: true,
 });
 
-const ChatGroup = mongoose.model('ChatGroup', chatGroupSchema);
+const ChatGroup = mongoose.model('group', chatGroupSchema);
 
 module.exports = ChatGroup;
