@@ -23,11 +23,11 @@ class authController {
 
             if (!isValidPassword) return res.status(400).json("Thông tin tài khoản hoặc mật khẩu không chính xác")
 
-            user = { ...user.toObject(), password: undefined };
-
             const token = createToken(user._id);
 
-            res.status(200).json({ user, token })
+            user = { ...user.toObject(), password: undefined, token};
+
+            res.status(200).json( user )
 
         } catch (err) {
             res.status(500).json({ error: err.message });
@@ -65,12 +65,18 @@ class authController {
             }
 
             const salt = await bcrypt.genSalt(10);
+
             password = await bcrypt.hash(password, salt);
+
             req.body.password = password;
+
             user = await authService.createUser(req.body);
-            user = { ...user.toObject(), password: undefined };
+
             const token = createToken(user._id);
-            res.status(200).json({ user, token })
+
+            user = { ...user.toObject(), password: undefined ,token};
+            
+            res.status(200).json(user)
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
@@ -80,7 +86,7 @@ class authController {
             const userId = req.params.userId
 
             var user = await authService.getUser(userId)
-            
+            user = { ...user.toObject(), password: undefined};
             res.status(200).json(user)
         }
         catch (err) {
@@ -89,10 +95,12 @@ class authController {
     }
     async getUser(req, res) {
         try {
-            
-
             var users = await authService.getAllUsers()
-            res.status(200).json(users)
+            const usersWithoutPasswords = users.map(user => {
+                const { password, ...userWithoutPassword } = user.toObject();
+                return userWithoutPassword;
+            });
+            res.status(200).json(usersWithoutPasswords)
         }
         catch (err) {
             res.status(500).json({ error: err.message });
