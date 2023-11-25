@@ -47,6 +47,6 @@
 
 Ứng dụng được phát triển bởi:
 
-- **[Cao Văn Thiện](https://github.com/Thien2k2)**
-  - [Facebook](https://wwư.facebook.com/caovanthien09102002/)
+- **[Cao Văn Thiện](https://github.com/CVThien2k2)**
+  - [Facebook](https://www.facebook.com/caovanthien09102002/)
 
