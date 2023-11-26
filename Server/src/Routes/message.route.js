@@ -1,10 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const authController = require('../Controllers/auth.controller')
+const messageController = require('../Controllers/message.controller')
 
-router.post('/create', authController.registerUser)
-router.post('/login',authController.loginUser)
-router.get('/find/:userId',authController.findUser)
-router.get('/',authController.getUser)
+router.post('/', messageController.create)
+router.get('/:group_id', messageController.getMessage)
 
 module.exports = router;

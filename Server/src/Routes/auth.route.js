@@ -7,4 +7,6 @@ router.post('/login',authController.loginUser)
 router.get('/find/:userId',authController.findUser)
 router.get('/',authController.getUser)
 
+
+
 module.exports = router;
