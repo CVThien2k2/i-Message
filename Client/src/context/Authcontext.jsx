@@ -49,7 +49,6 @@ export const AuthContextProvider = ({ children }) => {
      })
      const loginUser = useCallback(async(e)=>{
 
-          console.log(loginInfo)
           e.preventDefault()
           setLoginError(null);
           setLoginLoading(true)
