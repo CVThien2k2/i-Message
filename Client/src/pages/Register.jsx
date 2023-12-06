@@ -1,35 +1,163 @@
-import { useContext } from 'react';
-import { Form, Row, Col, Button, Alert, Stack } from 'react-bootstrap';
-import { AuthContext } from '../context/Authcontext';
+import { useContext } from "react";
+import { AuthContext } from "../context/Authcontext";
+import { useForm } from "@mantine/form";
+import {
+  TextInput,
+  PasswordInput,
+  Checkbox,
+  Anchor,
+  Paper,
+  Title,
+  Text,
+  Container,
+  Group,
+  Button,
+  NativeSelect,
+} from "@mantine/core";
+import classes from "./CSS/login.module.css";
 const Register = () => {
-    const { registerInfo, updateRegisterInfo, registerUser, isRegisterLoading, registerError} = useContext(AuthContext)
-    return (<>
-        <>
-            <Form onSubmit={registerUser}>
-                <Row
-                    style={{
-                        height: "100vh",
-                        justifyContent: "center",
-                        paddingTop: '10%'
-                    }}>
-                    <Col xs={6}>
-                        <Stack gap={3} >
-                            <h2 >Đăng ký</h2>
-                            <Form.Control type='text' placeholder='Họ tên' onChange={(e) => updateRegisterInfo({ ...registerInfo, name: e.target.value })} />
-                            <Form.Control type='password' placeholder='Mật khẩu' onChange={(e) => updateRegisterInfo({ ...registerInfo, password: e.target.value })} />
-                            <Form.Control type='text' placeholder='Email' onChange={(e) => updateRegisterInfo({ ...registerInfo, email: e.target.value })} />
-                            <Form.Control type='number' placeholder='Số điện thoại' onChange={(e) => updateRegisterInfo({ ...registerInfo, numberPhone: e.target.value })} />
-                            <Button variant='primary' type='submit' >
-                                {isRegisterLoading ? "Đang tạo tài khoản của bạn": "Đăng ký"}
-                            </Button>
-                            {registerError?.error && <Alert variant='danger'>
-                                <p>{registerError?.message}</p>
-                            </Alert>}
-                        </Stack>
-                    </Col>
-                </Row>
-            </Form>
-        </>
-    </>)
-}
+  const {
+    registerInfo,
+    updateRegisterInfo,
+    registerUser,
+    isRegisterLoading,
+    registerError,
+  } = useContext(AuthContext);
+  const form = useForm({
+    initialValues: {
+      email: "",
+      password: "",
+      name: "",
+      gender: "",
+      checkbox: "",
+    },
+
+    validate: {
+      email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
+      password: (val) =>
+        val.length <= 6
+          ? "Password should include at least 6 characters"
+          : null,
+      name: (val) => (val.trim() !== "" ? null : "Name cannot be empty"),
+      gender: (val) => (val !== "" ? null : "Please select a gender"),
+      numberPhone: (val) =>
+        /^\d+$/.test(val) ? null : "Number Phone should contain only digits",
+    },
+  });
+  return (
+    <>
+      <form onSubmit={form.onSubmit(registerUser)}>
+        <Container size={420} my={40}>
+          <Title ta="center" className={classes.title}>
+            Welcome to Messenger!
+          </Title>
+          <Text c="dimmed" size="sm" ta="center" mt={5}>
+            Already have an account?{" "}
+            <Anchor href="/login" size="sm">
+              Login
+            </Anchor>
+          </Text>
+
+          <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+            <TextInput
+              label="email"
+              placeholder="yourEmail@gmail.com"
+              required
+              onChange={(e) => {
+                form.setFieldValue("email", e.currentTarget.value);
+                updateRegisterInfo({ ...registerInfo, email: e.target.value });
+              }}
+              error={form.errors.email && "Invalid email"}
+            />
+            <Group justify="space-between">
+              <TextInput
+                label="Name"
+                placeholder="Your name"
+                required
+                onChange={(e) => {
+                  form.setFieldValue("name", e.currentTarget.value);
+                  updateRegisterInfo({ ...registerInfo, name: e.target.value });
+                }}
+                error={form.errors.email && "Invalid email"}
+              />
+              <NativeSelect
+                required
+                label="Gender"
+                placeholder="Gender"
+                data={["", "Male", "Female", "Other"]}
+                onChange={(e) => {
+                  form.setFieldValue("gender", e.currentTarget.value);
+                  updateRegisterInfo({
+                    ...registerInfo,
+                    gender: e.currentTarget.value,
+                  });
+                }}
+              />
+            </Group>
+
+            <TextInput
+              label="Number Phone"
+              placeholder="Ex: 0395797020"
+              required
+              onChange={(e) => {
+                form.setFieldValue("numberPhone", e.currentTarget.value);
+                updateRegisterInfo({
+                  ...registerInfo,
+                  numberPhone: e.target.value,
+                });
+              }}
+              error={form.errors.email && "Incorrect "}
+            />
+            <PasswordInput
+              label="Password"
+              placeholder="Your password"
+              required
+              mt="md"
+              onChange={(e) => {
+                form.setFieldValue("password", e.currentTarget.value);
+                updateRegisterInfo({
+                  ...registerInfo,
+                  password: e.target.value,
+                });
+              }}
+              error={
+                form.errors.password &&
+                "Password should include at least 6 characters"
+              }
+            />
+            {
+              <Text
+                c="red"
+                size="sm"
+                ta="center"
+                style={{
+                  opacity: registerError?.error ? 1 : 0,
+                  transition: "opacity 0.3s ease", // Thêm hiệu ứng transition nếu muốn
+                }}
+              >
+                {registerError?.message}
+              </Text>
+            }
+            <Group justify="space-between" mt="lg">
+              <Checkbox
+                label="I accept terms and conditions"
+                onChange={(e) => {
+                  form.setFieldValue("checkbox", e.currentTarget.checked);
+                }}
+              />
+            </Group>
+            <Button
+              type="submit"
+              fullWidth
+              mt="xl"
+              disabled={!form.values.checkbox}
+            >
+              {isRegisterLoading ? "Loading..." : "Register"}
+            </Button>
+          </Paper>
+        </Container>
+      </form>
+    </>
+  );
+};
 export default Register;

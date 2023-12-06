@@ -16,22 +16,26 @@ const Chat = () => {
   } = useContext(GroupContext);
   return (
     <>
-      <PotentialChat />
-      {userGroups?.length < 1 ? null : (
-        <Stack direction="horizontal" gap={4} className="align-item-start">
-          <Stack className="message-box flex-grow-0 pe-3" gap={3}>
-            {isUserGroupLoading && <p>Loading chat...</p>}
-            {userGroups?.map((group, index) => {
-              return (
-                <div key={index} onClick={() => updateCurrenChat(group)}>
-                  <UserChat group={group} user={user} />
-                </div>
-              );
-            })}
+      (
+      <Stack direction="horizontal" gap={4} className="align-item-start">
+        <div className="userChat">
+          <Stack className="userChat">
+            <PotentialChat />
+            <Stack className="message-box flex-grow-1 pe-3" gap={3}>
+              {isUserGroupLoading && <p>Loading chat...</p>}
+              {userGroups?.map((group, index) => {
+                return (
+                  <div key={index} onClick={() => updateCurrenChat(group)}>
+                    <UserChat group={group} user={user} />
+                  </div>
+                );
+              })}
+            </Stack>
           </Stack>
-          <ChatBox />
-        </Stack>
-      )}
+        </div>
+        <ChatBox />
+      </Stack>
+      )
     </>
   );
 };

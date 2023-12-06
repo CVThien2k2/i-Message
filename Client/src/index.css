@@ -56,6 +56,8 @@ body {
 
 /* Chat Box */
 .chat-box {
+  height: 100%;
+  width: 100%;
   height: calc(100vh - 10rem);
   overflow-y: auto;
   background: rgb(186 230 253);
@@ -137,8 +139,8 @@ body {
   right: 0;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-  background: #181d31;
-  color: white;
+  background: rgb(249 250 251);
+  color: black;
   z-index: 5;
 }
 
@@ -172,13 +174,13 @@ body {
 }
 
 .notification.not-read {
-  background: #263159;
+  background: rgb(156 163 175);
 }
 
 .notification-time {
   margin-top: 0.2rem;
   font-size: 12px;
-  color: #e0e0e0;
+  color: black;
 }
 
 .notification-count {
@@ -208,8 +210,8 @@ body {
   justify-content: center;
 }
 .avatar-user {
-  width: 30px;
-  height: 30px;
+  width: 50px;
+  height: 50px;
   borderradius: 50%;
   objectfit: cover;
   margin: 10px;
@@ -219,4 +221,18 @@ body {
 }
 .hover-chat:hover {
   background: #cccccc;
+}
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+.test {
+  background: black;
+  height: 500px;
+  display: flex;
 }
