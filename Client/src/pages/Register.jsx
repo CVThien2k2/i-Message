@@ -14,7 +14,6 @@ import {
   Button,
   NativeSelect,
 } from "@mantine/core";
-import classes from "./CSS/login.module.css";
 const Register = () => {
   const {
     registerInfo,
@@ -48,7 +47,13 @@ const Register = () => {
     <>
       <form onSubmit={form.onSubmit(registerUser)}>
         <Container size={420} my={40}>
-          <Title ta="center" className={classes.title}>
+          <Title
+            ta="center"
+            style={{
+              fontFamily: "Greycliff CF, var(--mantine-font-family)",
+              fontWeight: 900,
+            }}
+          >
             Welcome to Messenger!
           </Title>
           <Text c="dimmed" size="sm" ta="center" mt={5}>

@@ -40,6 +40,7 @@ export const GroupContextProvider = ({ children, user }) => {
   //send message
   useEffect(() => {
     if (socket === null) return;
+
     const recipientId = currenChat?.members?.find((id) => id !== user?._id);
     socket.emit("sendMessage", { ...newMessage, recipientId });
   }, [newMessage]);
@@ -110,6 +111,7 @@ export const GroupContextProvider = ({ children, user }) => {
       }
 
       setNewMessage(response);
+      setNotification((prev) => [{ ...response, isRead: true }, ...prev]);
       setMessages((pre) => [...pre, response]);
       setTextMessage("");
     },
