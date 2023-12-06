@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../context/Authcontext";
 import { GroupContext } from "../../context/GroupContext";
 import { useFetchRecipient } from "../../hooks/useFetchRecipients";
@@ -16,7 +16,11 @@ const ChatBox = () => {
   } = useContext(GroupContext);
   const { recipientUser } = useFetchRecipient(currenChat, user);
   const [textMessage, setTextMessage] = useState("");
-  console.log(textMessage);
+  const scroll = useRef();
+
+  useEffect(() => {
+    scroll.current?.scrollIntoView({ behavior: "smooth" }), [messages];
+  });
   if (!recipientUser) {
     return (
       <p
@@ -36,6 +40,8 @@ const ChatBox = () => {
           style={{
             textAlign: "center",
             width: "100%",
+            height: "70%",
+            background: "#000",
           }}
         >
           Loading Message...
@@ -58,13 +64,14 @@ const ChatBox = () => {
                   ? "message self align-self-end flex-grow-0"
                   : "message  align-self-start flex-grow-0"
               }`}
+              ref={scroll}
             >
               <span>{message.text}</span>
               <span>{moment(message.createdAt).calendar()}</span>
             </Stack>
           ))}
       </Stack>
-      <Stack direction="horizontal" gap={3} className="chat-input flex-grow-0">
+      <Stack direction="horizontal" gap={3} className="chat-input flex-grow-1">
         <InputEmoji
           value={textMessage}
           onChange={setTextMessage}

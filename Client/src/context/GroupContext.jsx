@@ -16,7 +16,8 @@ export const GroupContextProvider = ({ children, user }) => {
   const [newMessage, setNewMessage] = useState(null);
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
-
+  const [notification, setNotification] = useState([]);
+  const [allUser, setAllUser] = useState([]);
   //init socket
   useEffect(() => {
     if (!user) return;
@@ -33,7 +34,6 @@ export const GroupContextProvider = ({ children, user }) => {
 
     socket.on("getonlineUsers", (res) => {
       setOnlineUsers(res);
-      console.log(res);
     });
   }, [socket]);
 
@@ -49,13 +49,21 @@ export const GroupContextProvider = ({ children, user }) => {
     if (socket === null) return;
 
     socket.on("getMessage", (res) => {
-      console.log(messages);
       if (currenChat?._id !== res.group_id) return;
       setMessages((pre) => [...pre, res]);
+    });
+    socket.on("getNotification", (res) => {
+      const isChatOpen = currenChat?.members.some((id) => id === res.user_id);
+      if (isChatOpen) {
+        setNotification((prev) => [{ ...res, isRead: true }, ...prev]);
+      } else {
+        setNotification((prev) => [res, ...prev]);
+      }
     });
 
     return () => {
       socket.off("getMessage");
+      socket.off("getNotification");
     };
   }, [socket, currenChat]);
   useEffect(() => {
@@ -81,6 +89,7 @@ export const GroupContextProvider = ({ children, user }) => {
         return !isChatCreated;
       });
       setPotentialChats(pChats);
+      setAllUser(response);
     };
     getUsers();
   }, [userGroups]);
@@ -110,6 +119,60 @@ export const GroupContextProvider = ({ children, user }) => {
   const updateCurrenChat = useCallback((chat) => {
     setCurrentChat(chat);
   }, []);
+  //Xử lí thông báo
+  const markAllNotification = useCallback((notification) => {
+    const mNotification = notification.map((n) => {
+      return { ...n, isRead: true };
+    });
+    setNotification(mNotification);
+  });
+  const markNotificationAsRead = useCallback(
+    (n, userGroups, user, notification) => {
+      //find to open chat
+      const desiredChat = userGroups.find((chat) => {
+        console.log(chat);
+        const chatMembers = [user._id, n.user_id];
+        const isDesiredChat = chat?.members.every((member) => {
+          return chatMembers.includes(member);
+        });
+        return isDesiredChat;
+      });
+      //mark notification as read
+      const mNotification = notification.map((el) => {
+        if (n.user_id === el.user_id) {
+          return {
+            ...n,
+            isRead: true,
+          };
+        } else {
+          return el;
+        }
+      });
+      updateCurrenChat(desiredChat);
+      setNotification(mNotification);
+    },
+    []
+  );
+  const markThisUserNotificationAsRead = useCallback(
+    (thisUserNotification, notification) => {
+      //mark notification as read
+      console.log(thisUserNotification);
+      const mNotification = notification.map((el) => {
+        let notify;
+        thisUserNotification.forEach((n) => {
+          if (n.user_id === el.user_id) {
+            notify = { ...n, isRead: true };
+          } else {
+            notify = el;
+          }
+        });
+
+        return notify;
+      });
+      setNotification(mNotification);
+    },
+    []
+  );
 
   const createChat = useCallback(async (firstID, secondID) => {
     const response = await postRequest(
@@ -173,6 +236,11 @@ export const GroupContextProvider = ({ children, user }) => {
         sendTextMessage,
         setSendTextMessageError,
         onlineUsers,
+        notification,
+        allUser,
+        markAllNotification,
+        markNotificationAsRead,
+        markThisUserNotificationAsRead,
       }}
     >
       {children}

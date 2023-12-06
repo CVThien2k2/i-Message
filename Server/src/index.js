@@ -61,6 +61,11 @@ io.on("connection", (socket) => {
 
     if (user) {
       io.to(user.socketId).emit("getMessage", message);
+      io.to(user.socketId).emit("getNotification", {
+        user_id: message.user_id,
+        isRead: false,
+        date: new Date(),
+      });
     }
   });
   socket.on("disconnect", () => {
