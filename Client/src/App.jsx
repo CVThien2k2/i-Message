@@ -9,6 +9,7 @@ import { Container } from "react-bootstrap";
 import NavBar from "./components/NavBar";
 import { AuthContext } from "./context/Authcontext";
 import { GroupContextProvider } from "./context/GroupContext";
+import { ListFriend } from "./components/friend/ListFriend";
 function App() {
   const { user } = useContext(AuthContext);
   return (
@@ -22,6 +23,11 @@ function App() {
             path="/register"
             element={user ? <GroupChat /> : <Register />}
           />
+
+          <Route
+            path="/friend"
+            element={user ? <ListFriend /> : <Login />}
+          ></Route>
           <Route path="/*" element={<Navigate to="/" />} />
         </Routes>
       </div>

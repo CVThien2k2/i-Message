@@ -22,8 +22,9 @@ const PotentialChat = () => {
               className="single-user"
               key={index}
               onClick={() => createChat(user._id, u._id)}
+              title={u.name}
             >
-              {u.name}
+              <img src={u.avatar} alt="Avatar" className="avatar-user" />
               <span
                 className={
                   onlineUsers?.some((user) => {

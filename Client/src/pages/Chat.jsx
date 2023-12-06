@@ -16,7 +16,6 @@ const Chat = () => {
   } = useContext(GroupContext);
   return (
     <>
-      (
       <Stack direction="horizontal" gap={4} className="align-item-start">
         <div className="userChat">
           <Stack className="userChat">
@@ -35,7 +34,6 @@ const Chat = () => {
         </div>
         <ChatBox />
       </Stack>
-      )
     </>
   );
 };

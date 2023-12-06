@@ -14,7 +14,7 @@ import {
   Divider,
   Button,
 } from "@mantine/core";
-import classes from "./CSS/login.module.css";
+
 import { GoogleButton } from "../components/buttons/GoogleButton";
 import { FaceBookButton } from "../components/buttons/FacebookButton";
 const Login = () => {
