@@ -1,5 +1,9 @@
 const Setting = () => {
-  return <></>;
+  return (
+    <>
+      <p>Vào code giao diện Setting đi</p>
+    </>
+  );
 };
 
 export default Setting;

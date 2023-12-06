@@ -41,7 +41,7 @@ const user = {
 };
 
 const tabs = ["Message", "Friend", "Profile"];
-function NavBar() {
+function Header() {
   const theme = useMantineTheme();
   const [opened, { toggle }] = useDisclosure(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
@@ -53,7 +53,7 @@ function NavBar() {
     </Tabs.Tab>
   ));
   const { user, logOutUser } = useContext(AuthContext);
-  console.log(user);
+
   return (
     <div className={classes.header}>
       <Container className={classes.mainSection} size="md">
@@ -137,7 +137,7 @@ function NavBar() {
                           stroke={1.5}
                         />
                       }
-                      onClick={() => navigate("/profile")}
+                      onClick={() => navigate("/setting")}
                     >
                       Setting
                     </Menu.Item>
@@ -210,4 +210,4 @@ function NavBar() {
   );
 }
 
-export default NavBar;
+export default Header;
