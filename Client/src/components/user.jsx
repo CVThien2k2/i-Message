@@ -1,10 +1,8 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/Authcontext";
-import ".././index.css";
 import Notification from "./chat/Notification";
 import cx from "clsx";
 import { useNavigate } from "react-router-dom";
-
 import {
   Container,
   Avatar,
@@ -26,7 +24,6 @@ import {
   IconUserPlus,
   IconUserCircle,
 } from "@tabler/icons-react";
-
 import classes from "./HeaderTabs.module.css";
 
 const user = {
@@ -35,7 +32,6 @@ const user = {
   image:
     "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-5.png",
 };
-
 const tabs = ["Message", "Friend", "Profile"];
 function Header() {
   const theme = useMantineTheme();
@@ -217,5 +213,4 @@ function Header() {
     </div>
   );
 }
-
 export default Header;

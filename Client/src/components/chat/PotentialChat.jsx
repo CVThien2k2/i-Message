@@ -1,8 +1,7 @@
 import { useContext } from "react";
-import { GroupContext } from "../../context/GroupContext";
 import { AuthContext } from "../../context/Authcontext";
+import { GroupContext } from "../../context/GroupContext";
 
-import { Stack } from "react-bootstrap";
 const PotentialChat = () => {
   const { user } = useContext(AuthContext);
   const { potentialChats, createChat, onlineUsers } = useContext(GroupContext);
@@ -22,7 +21,7 @@ const PotentialChat = () => {
             className="single-user"
             key={index}
             onClick={() => {
-              createChat(user._id, u._id);
+              createChat([user._id, u._id]);
             }}
             title={u.name}
           >

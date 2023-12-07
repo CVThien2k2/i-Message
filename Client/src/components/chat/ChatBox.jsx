@@ -5,6 +5,12 @@ import { useFetchRecipient } from "../../hooks/useFetchRecipients";
 import { Stack } from "react-bootstrap";
 import moment from "moment";
 import InputEmoji from "react-input-emoji";
+import { Avatar, Button } from "@mantine/core";
+import {
+  IconPhoneFilled,
+  IconVideo,
+  IconDotsVertical,
+} from "@tabler/icons-react";
 const ChatBox = () => {
   const { user } = useContext(AuthContext);
   const {
@@ -17,6 +23,8 @@ const ChatBox = () => {
   const { recipientUser } = useFetchRecipient(currenChat, user);
   const [textMessage, setTextMessage] = useState("");
   const scroll = useRef();
+  // const usersCount = currenChat.userCount;
+  // console.log(currenChat);
   useEffect(() => {
     scroll.current?.scrollIntoView({ behavior: "smooth" }), [messages];
   });
@@ -29,7 +37,7 @@ const ChatBox = () => {
             textAlign: "center",
             height: "100%",
             width: "100%",
-            height: "calc(100vh - 10rem)",
+
             background: "rgb(186 230 253)",
             display: "flex",
             flexDirection: "column",
@@ -47,7 +55,45 @@ const ChatBox = () => {
       ) : (
         <>
           <header className="chat-header">
-            <strong>{recipientUser?.name}</strong>
+            <div className="left-section">
+              {currenChat?.userCount < 3 ? (
+                <>
+                  <Avatar
+                    src={recipientUser?.avatar}
+                    height="35px"
+                    style={{ marginRight: "10px" }}
+                  />
+                  <strong>{recipientUser?.name}</strong>
+                </>
+              ) : (
+                <>
+                  <Avatar
+                    src={currenChat?.avatar}
+                    height="35px"
+                    style={{ marginRight: "10px" }}
+                  />
+                  <strong>{currenChat?.name}</strong>
+                </>
+              )}
+            </div>
+
+            <div className="right-section">
+              <IconPhoneFilled
+                style={{ width: "35px", height: "35px", marginRight: "12px" }}
+                gradient={{ from: "lime", to: "red", deg: 90 }}
+                color="blue"
+              />
+              <IconVideo
+                style={{ width: "40px", height: "40px", marginRight: "10px" }}
+                gradient={{ from: "lime", to: "red", deg: 90 }}
+                color="Black"
+              />
+              <IconDotsVertical
+                style={{ width: "30px", height: "30px", marginRight: "10px" }}
+                gradient={{ from: "lime", to: "red", deg: 90 }}
+                color="Black"
+              />
+            </div>
           </header>
 
           <Stack gap={3} className="messages">
