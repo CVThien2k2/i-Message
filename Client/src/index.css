@@ -62,7 +62,7 @@ body {
 .chat-box {
   height: 100%;
   width: 100%;
-  height: calc(100vh - 10rem);
+
   overflow-y: auto;
   background: rgb(186 230 253);
   border-radius: 10px;
@@ -75,11 +75,20 @@ body {
 /* Chat Header */
 .chat-header {
   display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 0.75rem;
-  color: white;
+  color: black;
   background: rgb(125 211 252);
+  justify-content: space-between;
+}
+
+.left-section {
+  display: flex;
+  align-items: center; /* Đảm bảo các phần tử trong left-section căn giữa theo chiều dọc */
+}
+
+.right-section {
+  display: flex;
+  align-items: center; /* Đảm bảo các phần tử trong right-section căn giữa theo chiều dọc */
 }
 
 /* Messages */
@@ -191,7 +200,7 @@ body {
 
 .notification-count {
   display: flex;
-  background: #00bd9b;
+  background: red;
   height: 25px;
   width: 25px;
   font-size: 14px;
@@ -218,7 +227,7 @@ body {
 .avatar-user {
   width: 50px;
   height: 50px;
-  borderradius: 50%;
+  border-radius: 50%;
   objectfit: cover;
   margin: 5px;
 }
@@ -245,7 +254,6 @@ body {
   border: 1px solid #ccc;
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
   border-radius: 20px;
   margin-right: 5px;
 }
@@ -262,12 +270,15 @@ body {
 
 .users {
   flex: 1;
+  overflow-y: scroll;
+  max-height: 480px;
 }
 
 .chat-container {
   width: 70%;
   max-width: 70%; /* Đặt chiều rộng tối đa */
   display: flex;
+  max-height: 600px;
   flex-direction: column;
 }
 
@@ -276,4 +287,31 @@ body {
   overflow-y: scroll;
   padding: 10px;
   background-color: #f2f2f2;
+}
+
+
+/*  */
+.gradient-custom {
+  /* fallback for old browsers */
+  background: #f6d365;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1));
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1));
+
+  
+}
+.container{
+  height: 100vh;
+}
+
+.justify-content-center{
+  height: 100vh;
+} 
+
+.setting-container {
+  margin-left: 20px;
+  margin-right: 20px;
 }

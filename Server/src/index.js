@@ -54,7 +54,6 @@ io.on("connection", (socket) => {
     io.emit("getonlineUsers", onlineUsers);
   });
   socket.on("sendMessage", (message) => {
-    console.log(message);
     const user = onlineUsers.find(
       (user) => user.userId === message.recipientId
     );
@@ -62,20 +61,52 @@ io.on("connection", (socket) => {
     if (user) {
       io.to(user.socketId).emit("getMessage", message);
       io.to(user.socketId).emit("getNotification", {
+        group_id: message.group_id,
         user_id: message.user_id,
         isRead: false,
         date: new Date(),
       });
     }
   });
-  socket.on("disconnect", () => {
-    // Lọc và loại bỏ người dùng có socketId giống với socket.id
-    onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
+  socket.on("sendMessageBox", (message) => {
+    const members = message.members;
+    const newMessage = message.newMessage;
+    for (const member of members) {
+      if (member !== newMessage.user_id) {
+        const user = onlineUsers.find((user) => user.userId === member);
 
+        if (user) {
+          io.to(user.socketId).emit("getMessage", message.newMessage);
+          io.to(user.socketId).emit("getNotification", {
+            group_id: newMessage.group_id,
+            user_id: newMessage.user_id,
+            isRead: false,
+            date: new Date(),
+          });
+        }
+      }
+    }
+  });
+  socket.on("createChat", (messages) => {
+    console.log(messages);
+    const message = messages.newChatBox;
+
+    const user = messages.user;
+    const members = message.members;
+
+    for (const member of members) {
+      if (user._id !== member) {
+        const use = onlineUsers.find((u) => u.userId === member);
+        if (use) {
+          io.to(use.socketId).emit("newBoxChat", message);
+        }
+      }
+    }
+  });
+  socket.on("disconnect", () => {
+    onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
     console.log("User disconnected", socket.id);
     console.log("Online users after disconnect", onlineUsers);
-
-    // Gửi danh sách người dùng trực tuyến cho tất cả client sau khi có người dùng ngắt kết nối
     io.emit("getonlineUsers", onlineUsers);
   });
 });

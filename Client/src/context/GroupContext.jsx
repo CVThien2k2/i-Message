@@ -1,7 +1,7 @@
-import { createContext, useCallback, useState, useEffect } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import { baseUrl, getRequest, postRequest } from "../utils/services";
 export const GroupContext = createContext();
-import { io } from "socket.io-client";
 
 export const GroupContextProvider = ({ children, user }) => {
   const [userGroups, setUserGroups] = useState(null);
@@ -18,7 +18,8 @@ export const GroupContextProvider = ({ children, user }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [notification, setNotification] = useState([]);
   const [allUser, setAllUser] = useState([]);
-  //init socket
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newChatBox, setNewChatBox] = useState(null);
   useEffect(() => {
     if (!user) return;
     const newSocket = io("http://localhost:8081");
@@ -40,9 +41,14 @@ export const GroupContextProvider = ({ children, user }) => {
   //send message
   useEffect(() => {
     if (socket === null) return;
-
-    const recipientId = currenChat?.members?.find((id) => id !== user?._id);
-    socket.emit("sendMessage", { ...newMessage, recipientId });
+    let recipientId;
+    let members = currenChat.members;
+    if (currenChat.userCount > 2) {
+      socket.emit("sendMessageBox", { newMessage, members });
+    } else {
+      recipientId = currenChat?.members?.find((id) => id !== user?._id);
+      socket.emit("sendMessage", { ...newMessage, recipientId });
+    }
   }, [newMessage]);
 
   //get message
@@ -54,12 +60,19 @@ export const GroupContextProvider = ({ children, user }) => {
       setMessages((pre) => [...pre, res]);
     });
     socket.on("getNotification", (res) => {
-      const isChatOpen = currenChat?.members.some((id) => id === res.user_id);
+      let isChatOpen;
+      if (currenChat?._id === res.group_id) {
+        isChatOpen = true;
+      }
       if (isChatOpen) {
         setNotification((prev) => [{ ...res, isRead: true }, ...prev]);
       } else {
         setNotification((prev) => [res, ...prev]);
       }
+    });
+
+    socket.on("newBoxChat", (res) => {
+      setUserGroups((pre) => [...pre, res]);
     });
 
     return () => {
@@ -89,7 +102,7 @@ export const GroupContextProvider = ({ children, user }) => {
         }
         return !isChatCreated;
       });
-      setPotentialChats(pChats);
+      setPotentialChats(response);
       setAllUser(response);
     };
     getUsers();
@@ -132,7 +145,6 @@ export const GroupContextProvider = ({ children, user }) => {
     (n, userGroups, user, notification) => {
       //find to open chat
       const desiredChat = userGroups.find((chat) => {
-        console.log(chat);
         const chatMembers = [user._id, n.user_id];
         const isDesiredChat = chat?.members.every((member) => {
           return chatMembers.includes(member);
@@ -158,11 +170,11 @@ export const GroupContextProvider = ({ children, user }) => {
   const markThisUserNotificationAsRead = useCallback(
     (thisUserNotification, notification) => {
       //mark notification as read
-      console.log(thisUserNotification);
+
       const mNotification = notification.map((el) => {
         let notify;
         thisUserNotification.forEach((n) => {
-          if (n.user_id === el.user_id) {
+          if (n.group_id === el.group_id) {
             notify = { ...n, isRead: true };
           } else {
             notify = el;
@@ -175,19 +187,35 @@ export const GroupContextProvider = ({ children, user }) => {
     },
     []
   );
+  useEffect(() => {
+    if (socket === null) return;
 
-  const createChat = useCallback(async (firstID, secondID) => {
+    socket.emit("createChat", { newChatBox, user });
+  }, [newChatBox]);
+
+  const createChat = useCallback(async (members, nameGroup) => {
+    setIsSubmitting(true);
     const response = await postRequest(
       `${baseUrl}/group/`,
       JSON.stringify({
-        firstID,
-        secondID,
+        members,
+        name: nameGroup,
       })
     );
+
+    if (response.id) {
+      setCurrentChat(response.id);
+      return;
+    }
+
+    setNewChatBox(response);
+    setCurrentChat(response);
+    setIsSubmitting(false);
     if (response.error) {
-      return console.log("Error Creating chat", response);
+      return "";
     }
     setUserGroups((pre) => [...pre, response]);
+    return response;
   }, []);
   useEffect(() => {
     const getUserGroups = async () => {
@@ -229,7 +257,6 @@ export const GroupContextProvider = ({ children, user }) => {
         isUserGroupLoading,
         userGroupError,
         potentialChats,
-        createChat,
         updateCurrenChat,
         messages,
         isMessagesLoading,
@@ -243,6 +270,8 @@ export const GroupContextProvider = ({ children, user }) => {
         markAllNotification,
         markNotificationAsRead,
         markThisUserNotificationAsRead,
+        createChat,
+        isSubmitting,
       }}
     >
       {children}
