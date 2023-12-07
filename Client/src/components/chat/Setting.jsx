@@ -1,16 +1,11 @@
-import { MultiSelect } from "@mantine/core";
+import React from "react";
+import { Form, Button, Row, Col } from "react-bootstrap";
+
 const Setting = () => {
-  const largeData = Array(100_000)
-    .fill(0)
-    .map((_, index) => `Option ${index}`);
   return (
-    <MultiSelect
-      label="Your favorite libraries"
-      placeholder="Pick value"
-      limit={1000}
-      data={largeData}
-      searchable
-    />
+    <>
+      <p>Vào code giao diện Setting đi</p>
+    </>
   );
 };
 
