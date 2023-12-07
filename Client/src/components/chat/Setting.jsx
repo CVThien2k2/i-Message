@@ -1,7 +1,13 @@
 import React from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 
+
 const Setting = () => {
+  const [isEditing, setIsEditing] = useState(false); // State để kiểm soát việc hiển thị giao diện chỉnh sửa
+
+  const handleEditClick = () => {
+    setIsEditing(true); // Khi click vào nút "Edit", hiển thị giao diện chỉnh sửa
+  };
   return (
     <div className="setting-container">
       <div className="header text-center mt-4 mb-4">
