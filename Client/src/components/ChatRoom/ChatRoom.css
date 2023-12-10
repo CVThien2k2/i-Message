@@ -1,0 +1,12 @@
+.chat-room-container {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.no-scroll {
+  overflow: hidden;
+}
