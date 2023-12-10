@@ -1,4 +1,3 @@
-
 import { useContext } from "react";
 import { AuthContext } from "../context/Authcontext";
 import { useForm } from "@mantine/form";
@@ -108,12 +107,7 @@ const Login = () => {
           </Paper>
         </Container>
       </form>
-<<<<<<< HEAD
->>>>>>> 514a467f46d22f87cfd0cd54343764f422943401
-=======
->>>>>>> 66c367d6750983b17c6dff55c4c629f6f985d81e
-=======
->>>>>>> 514a467f46d22f87cfd0cd54343764f422943401
+
     </>
   );
 };
