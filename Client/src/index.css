@@ -289,29 +289,63 @@ body {
   background-color: #f2f2f2;
 }
 
-
 /*  */
 .gradient-custom {
   /* fallback for old browsers */
   background: #f6d365;
 
   /* Chrome 10-25, Safari 5.1-6 */
-  background: -webkit-linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1));
+  background: -webkit-linear-gradient(
+    to right bottom,
+    rgba(246, 211, 101, 1),
+    rgba(253, 160, 133, 1)
+  );
 
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  background: linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1));
-
-  
+  background: linear-gradient(
+    to right bottom,
+    rgba(246, 211, 101, 1),
+    rgba(253, 160, 133, 1)
+  );
 }
-.container{
+.container {
   height: 100vh;
 }
 
-.justify-content-center{
+.justify-content-center {
   height: 100vh;
-} 
+}
 
 .setting-container {
   margin-left: 20px;
   margin-right: 20px;
+}
+
+.profile-image {
+  width: 300px;
+}
+
+.my-5 {
+  margin-bottom: 5px;
+}
+
+.profile-image-container {
+  position: relative;
+}
+
+.button-under-image {
+  position: absolute;
+  bottom: -20px; /* Điều chỉnh khoảng cách nút với ảnh */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px; /* Đảm bảo chiều rộng và chiều cao của nút là như nhau */
+  height: 40px;
+  border-radius: 50%; /* Làm cho nút trở thành hình tròn */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.h5-button-spacing {
+  margin-top: 30px;
 }
