@@ -1,9 +1,9 @@
 import { createContext, useCallback, useEffect, useState } from "react";
-import { io } from "socket.io-client";
+
 import { baseUrl, getRequest, postRequest } from "../utils/services";
 export const GroupContext = createContext();
 
-export const GroupContextProvider = ({ children, user }) => {
+export const GroupContextProvider = ({ children, user, socket }) => {
   const [userGroups, setUserGroups] = useState(null);
   const [isUserGroupLoading, setIsUserGroupLoading] = useState(false);
   const [userGroupError, setUserGroupError] = useState(null);
@@ -14,20 +14,13 @@ export const GroupContextProvider = ({ children, user }) => {
   const [messagesError, setMessagesError] = useState(null);
   const [sendTextMessageError, setSendTextMessageError] = useState(null);
   const [newMessage, setNewMessage] = useState(null);
-  const [socket, setSocket] = useState(null);
+
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [notification, setNotification] = useState([]);
   const [allUser, setAllUser] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newChatBox, setNewChatBox] = useState(null);
-  useEffect(() => {
-    if (!user) return;
-    const newSocket = io("http://localhost:8081");
-    setSocket(newSocket);
-    return () => {
-      newSocket.disconnect();
-    };
-  }, [user]);
+
   //add online user
   useEffect(() => {
     if (socket === null) return;
@@ -35,6 +28,10 @@ export const GroupContextProvider = ({ children, user }) => {
 
     socket.on("getonlineUsers", (res) => {
       setOnlineUsers(res);
+    });
+    socket.on("newBoxChat", (res) => {
+      console.log(res);
+      setUserGroups((pre) => [...pre, res]);
     });
   }, [socket]);
 
@@ -71,15 +68,14 @@ export const GroupContextProvider = ({ children, user }) => {
       }
     });
 
-    socket.on("newBoxChat", (res) => {
-      setUserGroups((pre) => [...pre, res]);
-    });
-
     return () => {
+      socket.off("CallAccpected");
+      socket.off("newBoxChat");
       socket.off("getMessage");
       socket.off("getNotification");
     };
   }, [socket, currenChat]);
+
   useEffect(() => {
     const getUsers = async () => {
       const response = await getRequest(`${baseUrl}/auth`);
@@ -94,15 +90,9 @@ export const GroupContextProvider = ({ children, user }) => {
         }
         let isChatCreated = false;
         if (user?._id === u._id) return false;
-
-        if (userGroups) {
-          isChatCreated = userGroups?.some((group) => {
-            return group.members[0] === u._id || group.members[1] === u._id;
-          });
-        }
         return !isChatCreated;
       });
-      setPotentialChats(response);
+      setPotentialChats(pChats);
       setAllUser(response);
     };
     getUsers();
@@ -248,7 +238,6 @@ export const GroupContextProvider = ({ children, user }) => {
     };
     getMessages();
   }, [currenChat]);
-
   return (
     <GroupContext.Provider
       value={{
@@ -272,6 +261,7 @@ export const GroupContextProvider = ({ children, user }) => {
         markThisUserNotificationAsRead,
         createChat,
         isSubmitting,
+        socket,
       }}
     >
       {children}

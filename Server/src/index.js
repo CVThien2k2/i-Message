@@ -16,20 +16,6 @@ app.use(
 app.use(express.json());
 app.use(cors());
 route(app);
-// const ConnectDB = async () => {
-//     try {
-//         await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/chat',
-//             {
-//                 useNewUrlParser: true,
-//                 useUnifiedTopology: true,
-//             });
-//         console.log("MongoDB Connected.")
-//     }
-//     catch (error) {
-//         console.log(error)
-//     }
-// }
-// ConnectDB();
 ConnectDB();
 const server = app.listen(port, () => {
   console.log("Server is running on port:" + port);
@@ -42,13 +28,13 @@ const io = new Server(server, {
 });
 let onlineUsers = [];
 io.on("connection", (socket) => {
-  console.log("new connection", socket.id);
+  // console.log("new connection", socket.id);
   socket.on("addNewUser", (userId) => {
-    !onlineUsers.some((user) => user.userId === userId) &&
-      onlineUsers.push({
-        userId,
-        socketId: socket.id,
-      });
+    // !onlineUsers.some((user) => user.userId === userId) &&
+    onlineUsers.push({
+      userId,
+      socketId: socket.id,
+    });
     console.log("Online user", onlineUsers);
 
     io.emit("getonlineUsers", onlineUsers);
@@ -87,8 +73,16 @@ io.on("connection", (socket) => {
       }
     }
   });
+  socket.on("callUser", (message) => {
+    console.log(message);
+    const user = onlineUsers.find(
+      (user) => user.userId === message.recipientUser._id
+    );
+    if (user) {
+      io.to(user.socketId).emit("CallAccpected", message);
+    }
+  });
   socket.on("createChat", (messages) => {
-    console.log(messages);
     const message = messages.newChatBox;
 
     const user = messages.user;
@@ -103,9 +97,32 @@ io.on("connection", (socket) => {
       }
     }
   });
+  socket.on("end", (data) => {
+    const user = onlineUsers.find((u) => u.userId === data._id);
+
+    if (user) io.to(user.socketId).emit("end", data);
+  });
+
+  socket.on("accept", (data) => {
+    const toUser = data.caller;
+    // console.log(data.recipientUser._id);
+    const receiverId = toUser._id;
+
+    const user = onlineUsers.find((u) => u.userId === receiverId);
+
+    if (user) io.to(user.socketId).emit("accept", data);
+  });
+  socket.on("reject", (data) => {
+    const to = data.to;
+    const receiverId = to._id;
+    const user = onlineUsers.find((u) => u.userId === receiverId);
+    if (user) socket.to(user.socketId).emit("reject", data);
+  });
+
+  socket.on("answerCallUser", (data) => {});
   socket.on("disconnect", () => {
     onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
-    console.log("User disconnected", socket.id);
+    // console.log("User disconnected", socket.id);
     console.log("Online users after disconnect", onlineUsers);
     io.emit("getonlineUsers", onlineUsers);
   });

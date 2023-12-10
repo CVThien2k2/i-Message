@@ -15,15 +15,18 @@ import ChatBox from "../components/chat/chatbox";
 import { AuthContext } from "../context/Authcontext";
 import { GroupContext } from "../context/GroupContext";
 import { useDisclosure } from "@mantine/hooks";
+import CallVideo from "../components/CallVideo";
 const Chat = () => {
   const { user } = useContext(AuthContext);
   const [opened, { open, close }] = useDisclosure(false);
   // const [value, setValue] = useState([]);
   const { allUser } = useContext(GroupContext);
-  const transformedArray = allUser.map((user) => ({
-    value: user._id,
-    label: user.name,
-  }));
+  const transformedArray = allUser
+    .filter((u) => user._id !== u._id) // Lọc ra các phần tử có user._id khác với u._id
+    .map((u) => ({
+      value: u._id,
+      label: u.name,
+    }));
   // console.log(value);
   const {
     userGroups,
@@ -116,7 +119,10 @@ const Chat = () => {
       >
         <form
           onSubmit={form.onSubmit(async () => {
-            const res = await createChat(form.values.array, form.values.name);
+            const res = await createChat(
+              [...form.values.array, user],
+              form.values.name
+            );
             if (res) {
               form.setFieldValue("array", []);
               form.setFieldValue("name", "");

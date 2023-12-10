@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Card, Col, Image, Row, Form, Button } from "react-bootstrap";
 
-export default function PersonalProfile() {
+function Profile() {
   const initialProfileData = {
     fullName: "Nguyễn Thị Huyền Nhi",
     description: "Hehehe",
@@ -42,6 +42,6 @@ export default function PersonalProfile() {
       <p>Vào code code giao diện profile đi</p>
     </>
   );
-};
+}
 
 export default Profile;
