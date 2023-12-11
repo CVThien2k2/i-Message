@@ -12,7 +12,7 @@ import moment from "moment";
 import {
   IconMessage2Share,
   IconPhoneCall,
-  IconPlus,
+  IconUserPlus,
 } from "@tabler/icons-react";
 import { useContext } from "react";
 import { GroupContext } from "../../context/GroupContext";
@@ -55,7 +55,7 @@ const Friend = ({ user, isfriend }) => {
           <Group gap={10} justify="flex-end">
             {!isfriend && (
               <ActionIcon variant="subtle" color="red">
-                <IconPlus
+                <IconUserPlus
                   style={{ width: rem(20), height: rem(20) }}
                   stroke={1.5}
                 />
