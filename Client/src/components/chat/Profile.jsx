@@ -71,6 +71,4 @@ export default function Profile() {
       <p>Vào code code giao diện profile đi</p>
     </>
   );
-};
-
-export default Profile;
+}
