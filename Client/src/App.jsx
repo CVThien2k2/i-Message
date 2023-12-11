@@ -21,6 +21,7 @@ import { GroupContextProvider } from "./context/GroupContext";
 import GroupChat from "./pages/Chat";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import FriendContextProvider from "./context/FriendContext";
 function App() {
   const [socket, setSocket] = useState(null);
   const { user } = useContext(AuthContext);
@@ -35,30 +36,35 @@ function App() {
   return (
     <GroupContextProvider user={user} socket={socket}>
       <CallContextProvider user={user} socket={socket}>
-        <Stack style={{ minHeight: "100vh" }}>
-          <Header />
-          <Routes>
-            {" "}
-            <Route path="/call" element={user ? <ToCalled /> : <Login />} />
-            <Route path="/message" element={user ? <GroupChat /> : <Login />} />
-            <Route path="/" element={user ? <GroupChat /> : <Login />} />
-            <Route path="/login" element={user ? <GroupChat /> : <Login />} />
-            <Route path="/profile" element={user ? <Profile /> : <Login />} />
-            <Route path="/setting" element={user ? <Setting /> : <Login />} />
-            <Route
-              path="/register"
-              element={user ? <GroupChat /> : <Register />}
-            />
-            <Route
-              path="/friend"
-              element={user ? <ListFriend /> : <Login />}
-            ></Route>
-            <Route path="/*" element={<Navigate to="/" />} />
-          </Routes>
-          <ReceiverCall />
-          <CallVideo />
-          <ReceiverVideo />
-        </Stack>
+        <FriendContextProvider user={user}>
+          <Stack style={{ minHeight: "100vh" }}>
+            <Header />
+            <Routes>
+              {" "}
+              <Route path="/call" element={user ? <ToCalled /> : <Login />} />
+              <Route
+                path="/message"
+                element={user ? <GroupChat /> : <Login />}
+              />
+              <Route path="/" element={user ? <GroupChat /> : <Login />} />
+              <Route path="/login" element={user ? <GroupChat /> : <Login />} />
+              <Route path="/profile" element={user ? <Profile /> : <Login />} />
+              <Route path="/setting" element={user ? <Setting /> : <Login />} />
+              <Route
+                path="/register"
+                element={user ? <GroupChat /> : <Register />}
+              />
+              <Route
+                path="/friend"
+                element={user ? <ListFriend /> : <Login />}
+              ></Route>
+              <Route path="/*" element={<Navigate to="/" />} />
+            </Routes>
+            <ReceiverCall />
+            <CallVideo />
+            <ReceiverVideo />
+          </Stack>
+        </FriendContextProvider>
       </CallContextProvider>
     </GroupContextProvider>
   );

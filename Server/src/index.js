@@ -1,4 +1,5 @@
 const express = require("express");
+const authService = require("./services/auth.service");
 const app = express();
 require("dotenv").config();
 const cors = require("cors");
@@ -31,6 +32,7 @@ io.on("connection", (socket) => {
   // console.log("new connection", socket.id);
   socket.on("addNewUser", (userId) => {
     // !onlineUsers.some((user) => user.userId === userId) &&
+    authService.updateOnline(userId, true);
     onlineUsers.push({
       userId,
       socketId: socket.id,
@@ -121,7 +123,9 @@ io.on("connection", (socket) => {
 
   socket.on("answerCallUser", (data) => {});
   socket.on("disconnect", () => {
+    const user = onlineUsers.find((u) => u.socketId === socket.id);
     onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
+    authService.updateOnline(user?.userId, false);
     // console.log("User disconnected", socket.id);
     console.log("Online users after disconnect", onlineUsers);
     io.emit("getonlineUsers", onlineUsers);

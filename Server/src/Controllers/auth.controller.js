@@ -107,6 +107,27 @@ class authController {
       res.status(500).json({ error: err.message });
     }
   }
+
+  async getFriends(req, res) {
+    try {
+      let user_id = req.body.user_id;
+      var friends = await authService.getUser(user_id);
+
+      res.status(200).json(friends.friends);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+  async updateOnline(req, res) {
+    try {
+      let user_id = req.body.user_id;
+      var response = await authService.updateOnline(user_id);
+
+      res.status(200).json(response);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
 }
 
 module.exports = new authController();

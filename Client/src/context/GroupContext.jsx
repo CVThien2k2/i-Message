@@ -96,7 +96,7 @@ export const GroupContextProvider = ({ children, user, socket }) => {
       setAllUser(response);
     };
     getUsers();
-  }, [userGroups]);
+  }, [userGroups, onlineUsers]);
 
   const sendTextMessage = useCallback(
     async (textMessage, sender, currentChatId, setTextMessage) => {

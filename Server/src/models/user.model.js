@@ -18,23 +18,8 @@ const UserSchema = new Schema(
       type: String,
     },
     email: { type: String, trim: true, required: true, unique: true },
-
-    // local: {
-    //     email: { type: String, trim: true },
-    //     password: String,
-    //     isActive: { type: Boolean, default: false },
-    //     veryfyToken: String,
-    // },
-    // facebook: {
-    //     uid: String,
-    //     token: String,
-    //     email: { type: String, trim: true }
-    // },
-    // google: {
-    //     uid: String,
-    //     token: String,
-    //     email: { type: String, trim: true }
-    // }
+    friends: [],
+    isOnline: { type: Boolean, default: true },
   },
   {
     timestamps: true,
