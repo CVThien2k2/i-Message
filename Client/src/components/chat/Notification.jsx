@@ -3,9 +3,9 @@ import { AuthContext } from "../../context/Authcontext";
 import { GroupContext } from "../../context/GroupContext";
 import { unreadNotificationsFunc } from "../../utils/unreadNotifications";
 import moment from "moment";
-
+import { Notification } from "@mantine/core";
 import { IconBell } from "@tabler/icons-react";
-const Notification = () => {
+const Notifications = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useContext(AuthContext);
   const {
@@ -77,4 +77,4 @@ const Notification = () => {
   );
 };
 
-export default Notification;
+export default Notifications;

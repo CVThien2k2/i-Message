@@ -28,22 +28,21 @@ import {
 } from "@tabler/icons-react";
 
 import classes from "./HeaderTabs.module.css";
-
-const user = {
-  name: "Jane Spoonfighter",
-  email: "janspoon@fighter.dev",
-  image:
-    "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-5.png",
-};
+import React from "react";
+import { useLocation } from "react-router-dom";
 
 const tabs = ["Message", "Friend", "Profile"];
 function Header() {
+  const location = useLocation();
+  const hideHeader = location.pathname === "/call";
   const theme = useMantineTheme();
   const [opened, { toggle }] = useDisclosure(false);
   const [activeTab, setActiveTab] = useState("Message");
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const navigate = useNavigate();
-
+  if (hideHeader) {
+    return null; // Trả về null nếu bạn muốn ẩn header
+  }
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab} key={tab}>
       {tab}
