@@ -1,6 +1,5 @@
 # Ứng dụng Chat Realtime
 
-
 ## Mô tả
 
 Đây là một ứng dụng chat realtime hoàn chỉnh, được xây dựng bằng ReactJS cho phía client, Node.js và Socket.io cho phía server, cùng với MongoDB để lưu trữ dữ liệu người dùng và tin nhắn.
@@ -32,21 +31,24 @@
 1. **Clone Repository:**
    ```bash
    git clone https://github.com/your-username/realtime-chat-app.git
+   ```
 2. **Cài đặt thư viện**
    ```bash
     cd realtime-chat-app
     npm install
+   ```
 3. **Cấu hình Database**
    ```bash
    Tạo một cơ sở dữ liệu MongoDB và cung cấp URL kết nối trong file và key_Token .env.
+   ```
 4. **Chạy Ứng dụng**
-    ```bash
-    npm run dev
-    ```
+   ```bash
+   npm run dev
+   ```
+
 ## Tác giả
 
 Ứng dụng được phát triển bởi:
 
 - **[Cao Văn Thiện](https://github.com/CVThien2k2)**
   - [Facebook](https://www.facebook.com/caovanthien09102002/)
-
