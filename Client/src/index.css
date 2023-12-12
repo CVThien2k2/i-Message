@@ -320,6 +320,35 @@ body {
   margin-left: 20px;
   margin-right: 20px;
 }
+
+.profile-image {
+  width: 300px;
+}
+
+.my-5 {
+  margin-bottom: 5px;
+}
+
+.profile-image-container {
+  position: relative;
+}
+
+.button-under-image {
+  position: absolute;
+  bottom: -20px; /* Điều chỉnh khoảng cách nút với ảnh */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px; /* Đảm bảo chiều rộng và chiều cao của nút là như nhau */
+  height: 40px;
+  border-radius: 50%; /* Làm cho nút trở thành hình tròn */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.h5-button-spacing {
+  margin-top: 30px;
+}
 .TableRow:hover {
   background: rgb(156 163 175);
 }

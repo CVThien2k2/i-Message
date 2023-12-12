@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { GroupContext } from "./GroupContext";
 import { baseUrl, getRequest, postRequest } from "../utils/services";
 
@@ -7,7 +13,8 @@ const FriendContextProvider = ({ children, user }) => {
   const { allUser } = useContext(GroupContext);
   const [friends, setFriends] = useState(null);
   const [notfriends, setNotFriends] = useState(null);
-
+  const [viewProfile, setViewProfile] = useState(false);
+  const [userView, setUserView] = useState(null);
   useEffect(() => {
     const getFriends = async () => {
       if (user?._id) {
@@ -33,8 +40,23 @@ const FriendContextProvider = ({ children, user }) => {
       setNotFriends(users);
     }
   }, [friends]);
+  const updateViewProfile = useCallback(() => {
+    setViewProfile(!viewProfile);
+  });
+  const updateUserView = useCallback((user) => {
+    setUserView(user);
+  });
   return (
-    <FriendContext.Provider value={{ friends, notfriends }}>
+    <FriendContext.Provider
+      value={{
+        friends,
+        notfriends,
+        viewProfile,
+        updateViewProfile,
+        userView,
+        updateUserView,
+      }}
+    >
       {children}
     </FriendContext.Provider>
   );

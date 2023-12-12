@@ -1,31 +1,11 @@
-import {
-  ActionIcon,
-  Anchor,
-  Avatar,
-  Badge,
-  Group,
-  Table,
-  Text,
-  rem,
-  Divider,
-} from "@mantine/core";
-import {
-  IconMessage2Share,
-  IconPhoneCall,
-  IconPlus,
-} from "@tabler/icons-react";
+import { Divider, Table } from "@mantine/core";
 import { useContext } from "react";
 import { Container } from "react-bootstrap";
-import { FriendContext } from "../../context/FriendContext";
-import Friend from "./friend";
-import { GroupContext } from "../../context/GroupContext";
 import { AuthContext } from "../../context/Authcontext";
-
-const jobColors = {
-  engineer: "blue",
-  manager: "cyan",
-  designer: "pink",
-};
+import { FriendContext } from "../../context/FriendContext";
+import { GroupContext } from "../../context/GroupContext";
+import Friend from "./friend";
+import ViewProfile from "../chat/ViewProfile";
 
 export function ListFriend({}) {
   const { friends } = useContext(FriendContext);
@@ -37,6 +17,7 @@ export function ListFriend({}) {
   });
   return (
     <>
+      <ViewProfile />
       <Container>
         {friends?.length > 1 ? (
           <Divider

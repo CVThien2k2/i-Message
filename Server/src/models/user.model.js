@@ -18,7 +18,9 @@ const UserSchema = new Schema(
       type: String,
     },
     email: { type: String, trim: true, required: true, unique: true },
-    friends: [],
+    friends: { type: Array, default: [] },
+    friendsRequest: { type: Array, default: [] },
+    friendsRequestWaitAccept: { type: Array, default: [] },
     isOnline: { type: Boolean, default: true },
   },
   {

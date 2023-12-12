@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Card, Col, Image, Row, Form, Button } from "react-bootstrap";
+import { IconPlus } from "@tabler/icons-react";
+import React, { useContext, useState } from "react";
+import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { AuthContext } from "../../context/Authcontext";
-import { postRequest, baseUrl } from "../../utils/services";
-import { Plus } from "react-bootstrap-icons";
-
+import { useEffect } from "react";
 export default function Profile() {
   /////////////////
   const { user } = useContext(AuthContext);
@@ -91,7 +90,7 @@ export default function Profile() {
                 />
                 <label htmlFor="fileInput">
                   <Button variant="primary" className="button-under-image">
-                    <Plus style={{ marginRight: "5px" }} />
+                    <IconPlus style={{ marginRight: "5px" }} />
                   </Button>
                 </label>
                 <input

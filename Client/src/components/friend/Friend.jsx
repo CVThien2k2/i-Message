@@ -12,20 +12,23 @@ import moment from "moment";
 import {
   IconMessage2Share,
   IconPhoneCall,
-  IconPlus,
+  IconUserPlus,
 } from "@tabler/icons-react";
 import { useContext } from "react";
 import { GroupContext } from "../../context/GroupContext";
+import { FriendContext } from "../../context/FriendContext";
 
 const Friend = ({ user, isfriend }) => {
   const { onlineUsers } = useContext(GroupContext);
+  const { updateViewProfile, updateUserView } = useContext(FriendContext);
   const isOnline = onlineUsers.some((u) => u?.userId === user?._id);
   return (
     <>
       <Table.Tr
         key={user.name}
         onClick={() => {
-          console.log("Hello");
+          updateViewProfile();
+          updateUserView(user);
         }}
         className="TableRow"
       >
@@ -55,7 +58,7 @@ const Friend = ({ user, isfriend }) => {
           <Group gap={10} justify="flex-end">
             {!isfriend && (
               <ActionIcon variant="subtle" color="red">
-                <IconPlus
+                <IconUserPlus
                   style={{ width: rem(20), height: rem(20) }}
                   stroke={1.5}
                 />
