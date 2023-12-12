@@ -23,7 +23,7 @@ export function ListFriend({}) {
           <Divider
             my="xs"
             size={10}
-            label="Bạn bè của bạn"
+            label="Your Friends"
             labelPosition="center"
           />
         ) : (
@@ -54,7 +54,7 @@ export function ListFriend({}) {
         <Divider
           my="xs"
           size={10}
-          label="Những người bạn có thể biết?"
+          label="People you may know?"
           labelPosition="center"
         />
         {notFriends?.length > 1 ? (

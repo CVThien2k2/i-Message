@@ -17,13 +17,25 @@ class authService {
       $set: { isOnline: isOnline },
     });
   };
-  updateProfile = async (user_id, name, numberPhone, address, avatar) => {
-    return await userModel.findByIdAndUpdate(user_id, {
-      name: name,
-      numberPhone: numberPhone,
-      address: address,
-      avatar: avatar,
-    });
+  updateProfile = async (
+    user_id,
+    name,
+    numberPhone,
+    address,
+    avatar,
+    email
+  ) => {
+    return await userModel.findByIdAndUpdate(
+      user_id,
+      {
+        name: name,
+        numberPhone: numberPhone,
+        address: address,
+        avatar: avatar,
+        email: email,
+      },
+      { new: true }
+    );
   };
 }
 module.exports = new authService();

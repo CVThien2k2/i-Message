@@ -29,10 +29,6 @@ export const GroupContextProvider = ({ children, user, socket }) => {
     socket.on("getonlineUsers", (res) => {
       setOnlineUsers(res);
     });
-    socket.on("newBoxChat", (res) => {
-      console.log(res);
-      setUserGroups((pre) => [...pre, res]);
-    });
   }, [socket]);
 
   //send message
@@ -67,9 +63,12 @@ export const GroupContextProvider = ({ children, user, socket }) => {
         setNotification((prev) => [res, ...prev]);
       }
     });
+    socket.on("newBoxChat", (res) => {
+      console.log(res);
+      setUserGroups((pre) => [...pre, res]);
+    });
 
     return () => {
-      socket.off("CallAccpected");
       socket.off("newBoxChat");
       socket.off("getMessage");
       socket.off("getNotification");

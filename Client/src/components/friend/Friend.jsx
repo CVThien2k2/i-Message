@@ -17,63 +17,76 @@ import {
 import { useContext } from "react";
 import { GroupContext } from "../../context/GroupContext";
 import { FriendContext } from "../../context/FriendContext";
-
-const Friend = ({ user, isfriend }) => {
-  const { onlineUsers } = useContext(GroupContext);
+import { AuthContext } from "../../context/Authcontext";
+import { useNavigate } from "react-router-dom";
+import { CallContext } from "../../context/CallContext";
+const Friend = ({ user: use, isfriend }) => {
+  const navigate = useNavigate();
+  const { onlineUsers, createChat } = useContext(GroupContext);
   const { updateViewProfile, updateUserView } = useContext(FriendContext);
-  const isOnline = onlineUsers.some((u) => u?.userId === user?._id);
+  const isOnline = onlineUsers.some((u) => u?.userId === use?._id);
+  const { user } = useContext(AuthContext);
+  const { callUser } = useContext(CallContext);
   return (
     <>
-      <Table.Tr
-        key={user.name}
-        onClick={() => {
-          updateViewProfile();
-          updateUserView(user);
-        }}
-        className="TableRow"
-      >
+      <Table.Tr key={use.name} className="TableRow">
         <Table.Td>
           <Group gap="sm">
-            <Avatar size={30} src={user.avatar} radius={30} />
+            <Avatar
+              size={30}
+              src={use.avatar}
+              radius={30}
+              onClick={() => {
+                updateViewProfile();
+                updateUserView(use);
+              }}
+            />
             <Text fz="sm" fw={500}>
-              {user.name}
+              {use.name}
             </Text>
           </Group>
         </Table.Td>
 
         <Table.Td>
           <Badge variant="light" color={isOnline ? "green" : "red"}>
-            {!isOnline ? moment(user.updatedAt).fromNow() : "Online"}
+            {!isOnline ? moment(use.updatedAt).fromNow() : "Online"}
           </Badge>
         </Table.Td>
         <Table.Td>
           <Anchor component="button" size="sm">
-            {user.email}
+            {use.email}
           </Anchor>
         </Table.Td>
         <Table.Td>
-          <Text fz="sm">+84 {user.numberPhone}</Text>
+          <Text fz="sm">+84 {use.numberPhone}</Text>
         </Table.Td>
         <Table.Td>
           <Group gap={10} justify="flex-end">
             {!isfriend && (
               <ActionIcon variant="subtle" color="red">
                 <IconUserPlus
-                  style={{ width: rem(20), height: rem(20) }}
+                  style={{ width: "35px", height: "35px" }}
                   stroke={1.5}
                 />
               </ActionIcon>
             )}
             <ActionIcon variant="subtle" color="green">
               <IconPhoneCall
-                style={{ width: rem(20), height: rem(20) }}
+                style={{ width: "35px", height: "35px" }}
                 stroke={1.5}
+                onClick={() => {
+                  callUser({ recipientUser: use, user });
+                }}
               />
             </ActionIcon>
             <ActionIcon variant="subtle" color="blue">
               <IconMessage2Share
-                style={{ width: rem(20), height: rem(20) }}
+                style={{ width: "35px", height: "35px" }}
                 stroke={1.5}
+                onClick={() => {
+                  createChat([user._id, use._id]);
+                  navigate("/message");
+                }}
               />
             </ActionIcon>
           </Group>
