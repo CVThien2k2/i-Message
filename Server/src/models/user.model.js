@@ -10,7 +10,7 @@ const UserSchema = new Schema(
     avatar: {
       type: String,
       default:
-        "https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp&w=256",
+        "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png",
     },
     role: { type: String, default: "user" },
     password: { type: String, required: true, minLength: 6, maxLength: 1000 },

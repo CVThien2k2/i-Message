@@ -12,7 +12,6 @@ const CallVideo = () => {
     useContext(CallContext);
   if (reject) return null;
   if (!makingCall) return null;
-
   return (
     <Modal show={true} backdrop="static" keyboard={false}>
       <CloseButton

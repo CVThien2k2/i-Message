@@ -128,7 +128,7 @@ function Header() {
                   </Menu.Item>
 
                   <Menu.Label>Settings</Menu.Label>
-                  <Menu.Item
+                  {/* <Menu.Item
                     leftSection={
                       <IconSettings
                         style={{ width: rem(16), height: rem(16) }}
@@ -141,7 +141,7 @@ function Header() {
                     }}
                   >
                     Setting
-                  </Menu.Item>
+                  </Menu.Item> */}
                   <Menu.Item
                     leftSection={
                       <IconLogout

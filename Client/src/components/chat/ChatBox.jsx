@@ -17,7 +17,7 @@ const ChatBox = () => {
   const [show, setShow] = useState(false);
   const { user } = useContext(AuthContext);
   const { currenChat, messages, sendTextMessage } = useContext(GroupContext);
-  const { callUser } = useContext(CallContext);
+  const { callUser, updateCall } = useContext(CallContext);
   const { recipientUser } = useFetchRecipient(currenChat, user);
   const [textMessage, setTextMessage] = useState("");
   const scroll = useRef();
@@ -82,6 +82,7 @@ const ChatBox = () => {
                   gradient={{ from: "lime", to: "red", deg: 90 }}
                   color="blue"
                   onClick={() => {
+                    updateCall(recipientUser);
                     callUser({ recipientUser, user });
                   }}
                 />

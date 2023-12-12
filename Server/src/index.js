@@ -76,7 +76,6 @@ io.on("connection", (socket) => {
     }
   });
   socket.on("callUser", (message) => {
-    console.log(message);
     const user = onlineUsers.find(
       (user) => user.userId === message.recipientUser._id
     );
@@ -100,9 +99,9 @@ io.on("connection", (socket) => {
     }
   });
   socket.on("end", (data) => {
-    const user = onlineUsers.find((u) => u.userId === data._id);
-
-    if (user) io.to(user.socketId).emit("end", data);
+    console.log(data);
+    // const user = onlineUsers.find((u) => u.userId === data._id);
+    // if (user) io.to(user.socketId).emit("end", data);
   });
 
   socket.on("accept", (data) => {

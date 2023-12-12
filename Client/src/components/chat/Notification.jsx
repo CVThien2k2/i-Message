@@ -64,7 +64,7 @@ const Notifications = () => {
                     markNotificationAsRead(n, userGroups, user, notification)
                   }
                 >
-                  <span>{`${n.senderName} sent you a new message`}</span>
+                  <span>{`${n.senderName} sent a new message`}</span>
                   <span className="notification-time">
                     {moment(n.date).calendar()}
                   </span>

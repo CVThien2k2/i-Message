@@ -62,7 +62,7 @@ export const CallContextProvider = ({ children, user, socket }) => {
     socket.emit("end", caller);
   });
 
-  const updateMakingCall = useCallback(() => {
+  const updateMakingCall = useCallback((u) => {
     setMakingCall(false);
 
     if (StreamRef.current) {
@@ -73,6 +73,7 @@ export const CallContextProvider = ({ children, user, socket }) => {
         myVideo.current.srcObject = null;
       }
     }
+    socket.emit("end", { ...u });
   });
 
   // ////////
