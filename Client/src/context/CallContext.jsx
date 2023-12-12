@@ -53,13 +53,13 @@ export const CallContextProvider = ({ children, user, socket }) => {
 
   const endCalled = useCallback(() => {
     SetCalling(false);
+    socket.emit("end", caller);
     setCaller(null);
     setMakingCall(false);
     setReceivingCall(false);
     myVideo.current = null;
     userVideo.current = null;
     StreamRef.current = null;
-    socket.emit("end", caller);
   });
 
   const updateMakingCall = useCallback((u) => {
@@ -145,6 +145,7 @@ export const CallContextProvider = ({ children, user, socket }) => {
         userVideo,
         calling,
         endCalled,
+        caller,
       }}
     >
       {children}

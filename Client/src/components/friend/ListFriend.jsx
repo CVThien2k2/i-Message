@@ -8,7 +8,8 @@ import Friend from "./friend";
 import ViewProfile from "../chat/ViewProfile";
 
 export function ListFriend({}) {
-  const { friends } = useContext(FriendContext);
+  const { friends, friendsRequests, friendsRequestsWaiting } =
+    useContext(FriendContext);
   const { allUser } = useContext(GroupContext);
   const { user } = useContext(AuthContext);
   const users = allUser?.filter((user) => friends?.includes(user._id));

@@ -161,6 +161,9 @@ function Header() {
           ) : (
             <Group>
               <Button
+                onClick={() => {
+                  navigate(`/login`);
+                }}
                 leftSection={
                   <IconLogout
                     style={{ width: rem(16), height: rem(16) }}
@@ -174,6 +177,9 @@ function Header() {
               </Button>
 
               <Button
+                onClick={() => {
+                  navigate(`/register`);
+                }}
                 leftSection={
                   <IconUserPlus
                     style={{ width: rem(16), height: rem(16) }}

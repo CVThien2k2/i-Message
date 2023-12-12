@@ -89,6 +89,10 @@ export const AuthContextProvider = ({ children }) => {
     localStorage.removeItem("User");
     setUser(null);
   });
+  const updateUser = useCallback((u) => {
+    localStorage.setItem("User", JSON.stringify(u));
+    setUser(u);
+  });
 
   return (
     <AuthContext.Provider
@@ -105,6 +109,7 @@ export const AuthContextProvider = ({ children }) => {
         loginError,
         isLoginLoading,
         loginInfo,
+        updateUser,
       }}
     >
       {children}

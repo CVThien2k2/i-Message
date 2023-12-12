@@ -118,7 +118,7 @@ class authController {
       let user_id = req.body.user_id;
       var friends = await authService.getUser(user_id);
 
-      res.status(200).json(friends.friends);
+      res.status(200).json(friends);
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
