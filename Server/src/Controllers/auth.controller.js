@@ -44,6 +44,11 @@ class authController {
       const name = req.body.name;
       const numberPhone = req.body.numberPhone;
       const gender = req.body.gender;
+      let avatar = "";
+      if (gender == "female") {
+        avatar =
+          "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png";
+      }
       let user = await userModel.findOne({ email: email });
       if (user) {
         return res.status(400).json("Email đã được sử dụng");
@@ -122,6 +127,26 @@ class authController {
     try {
       let user_id = req.body.user_id;
       var response = await authService.updateOnline(user_id);
+
+      res.status(200).json(response);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+  async updateProfile(req, res) {
+    try {
+      const user_id = req.body.user_id;
+      const name = req.body.name;
+      const numberPhone = req.body.numberPhone;
+      const address = req.body.address;
+      const avatar = req.body.avatar;
+      var response = await authService.updateProfile(
+        user_id,
+        name,
+        numberPhone,
+        address,
+        avatar
+      );
 
       res.status(200).json(response);
     } catch (err) {

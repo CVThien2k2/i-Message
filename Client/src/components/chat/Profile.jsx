@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Card, Col, Image, Row, Form, Button } from "react-bootstrap";
-import { AuthContext } from "../../context/Authcontext";
-import { postRequest, baseUrl } from "../../utils/services";
 import { IconPlus } from "@tabler/icons-react";
+import React, { useContext, useState } from "react";
+import { Button, Card, Col, Form, Row } from "react-bootstrap";
+import { AuthContext } from "../../context/Authcontext";
+import { useEffect } from "react";
 export default function Profile() {
   /////////////////
   const { user } = useContext(AuthContext);
