@@ -44,8 +44,8 @@ const Chat = () => {
     validate: (values) => {
       const errors = {};
 
-      if (values.array.length < 3) {
-        errors.array = "Select at least 3 members";
+      if (values.array.length < 2) {
+        errors.array = "Select at least 2 members";
       }
 
       if (!values.name.trim()) {

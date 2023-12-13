@@ -40,6 +40,7 @@ export default function Profile() {
   };
 
   const handleCancelClick = () => {
+    setProfileData(originalProfileData);
     setEditMode(false);
   };
   const [show, setShow] = useState(false);
@@ -95,6 +96,7 @@ export default function Profile() {
                   src={profileData.avatar}
                   alt="Avatar"
                   className="my-5 profile-image"
+                  style={{ borderRadius: "50%" }}
                 />
 
                 <input id="fileInput" type="file" style={{ display: "none" }} />

@@ -66,14 +66,14 @@ const Friend = ({ user: use, isfriend }) => {
         </Table.Td>
         <Table.Td>
           <Group gap={10} justify="flex-end">
-            {!isfriend && (
+            {/* {!isfriend && (
               <ActionIcon variant="subtle" color="red">
                 <IconUserPlus
                   style={{ width: "35px", height: "35px" }}
                   stroke={1.5}
                 />
               </ActionIcon>
-            )}
+            )} */}
             <ActionIcon variant="subtle" color="green">
               <IconPhoneCall
                 style={{ width: "35px", height: "35px" }}
