@@ -99,9 +99,8 @@ io.on("connection", (socket) => {
     }
   });
   socket.on("end", (data) => {
-    console.log(data);
-    // const user = onlineUsers.find((u) => u.userId === data._id);
-    // if (user) io.to(user.socketId).emit("end", data);
+    const user = onlineUsers.find((u) => u.userId === data._id);
+    if (user) io.to(user.socketId).emit("end", data);
   });
 
   socket.on("accept", (data) => {

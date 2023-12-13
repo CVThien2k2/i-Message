@@ -8,7 +8,7 @@ import { CloseButton, Group } from "@mantine/core";
 import { CallContext } from "../context/CallContext";
 
 const ReceiverVideo = () => {
-  const { calling, endCalled, userVideo } = useContext(CallContext);
+  const { calling, endCalled, userVideo, myVideo } = useContext(CallContext);
 
   if (!calling) return null;
 
@@ -22,10 +22,34 @@ const ReceiverVideo = () => {
       />
 
       <video
+        ref={myVideo}
+        playsInline
+        autoPlay
+        style={{
+          width: "150px", // Đặt kích thước cho video của bạn ở góc dưới cùng bên trái
+          height: "120px",
+          objectFit: "cover",
+          position: "absolute",
+          bottom: "20px",
+          left: "20px",
+          zIndex: 1,
+          marginBottom: "50px",
+          marginLeft: "10px",
+          background: "white",
+        }}
+        muted
+      ></video>
+      <video
         ref={userVideo}
         playsInline
         autoPlay
-        style={{ width: "100%", height: "80vh", objectFit: "contain" }}
+        style={{
+          width: "90%",
+          height: "80vh",
+          objectFit: "contain",
+          background: "black",
+          margin: "auto",
+        }}
         muted
       ></video>
       <Group justify="center">

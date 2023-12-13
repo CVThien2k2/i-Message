@@ -1,10 +1,11 @@
 import { useContext } from "react";
-import { Button } from "react-bootstrap"; // Thêm import này
+
 import Modal from "react-bootstrap/Modal";
 import { CallContext } from "../context/CallContext";
-
+import { Avatar, Text, Button, Paper } from "@mantine/core";
 const ReceiverCall = () => {
-  const { receivingCall, rejectCall, acceptCall } = useContext(CallContext);
+  const { receivingCall, rejectCall, acceptCall, caller } =
+    useContext(CallContext);
 
   if (!receivingCall) return null;
   return (
@@ -17,9 +18,16 @@ const ReceiverCall = () => {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Có cuộc gọi mới</Modal.Title>
+          <Modal.Title>Có cuộc gọi mới </Modal.Title>
         </Modal.Header>
-
+        <Modal.Body>
+          <Paper radius="md" withBorder p="lg" bg="var(--mantine-color-body)">
+            <Avatar src={caller.avatar} size={120} radius={120} mx="auto" />
+            <Text ta="center" fz="lg" fw={500} mt="md">
+              {caller.name}
+            </Text>
+          </Paper>
+        </Modal.Body>
         <Modal.Footer>
           <Button
             variant="primary"
@@ -29,7 +37,7 @@ const ReceiverCall = () => {
           >
             Accepect
           </Button>
-          <Button variant="d" onClick={rejectCall}>
+          <Button color="red" onClick={rejectCall}>
             Reject
           </Button>
         </Modal.Footer>

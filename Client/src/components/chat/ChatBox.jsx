@@ -82,12 +82,11 @@ const ChatBox = () => {
                   gradient={{ from: "lime", to: "red", deg: 90 }}
                   color="blue"
                   onClick={() => {
-                    updateCall(recipientUser);
                     callUser({ recipientUser, user });
                   }}
                 />
 
-                <IconVideo
+                {/* <IconVideo
                   style={{
                     width: "40px",
                     height: "40px",
@@ -96,7 +95,7 @@ const ChatBox = () => {
                   gradient={{ from: "lime", to: "red", deg: 90 }}
                   color="Black"
                   onClick={() => {}}
-                />
+                /> */}
 
                 <IconDotsVertical
                   style={{ width: "30px", height: "30px", marginRight: "10px" }}

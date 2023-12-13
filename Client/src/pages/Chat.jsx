@@ -1,22 +1,22 @@
 import {
   ActionIcon,
   Autocomplete,
-  MultiSelect,
-  Modal,
-  Input,
   Button,
+  Input,
+  Modal,
+  MultiSelect,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import { IconNewSection } from "@tabler/icons-react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PotentialChat from "../components/chat/PotentialChat";
 import UserChat from "../components/chat/UserChat";
 import ChatBox from "../components/chat/chatbox";
 import { AuthContext } from "../context/Authcontext";
 import { GroupContext } from "../context/GroupContext";
-import { useDisclosure } from "@mantine/hooks";
-import CallVideo from "../components/CallVideo";
 const Chat = () => {
+  const [value, setValue] = useState("");
   const { user } = useContext(AuthContext);
   const [opened, { open, close }] = useDisclosure(false);
   // const [value, setValue] = useState([]);
@@ -27,7 +27,7 @@ const Chat = () => {
       value: u._id,
       label: u.name,
     }));
-  // console.log(value);
+
   const {
     userGroups,
     setUserGroups,
@@ -44,8 +44,8 @@ const Chat = () => {
     validate: (values) => {
       const errors = {};
 
-      if (values.array.length < 3) {
-        errors.array = "Select at least 3 members";
+      if (values.array.length < 2) {
+        errors.array = "Select at least 2 members";
       }
 
       if (!values.name.trim()) {
@@ -55,6 +55,13 @@ const Chat = () => {
       return errors;
     },
   });
+  useEffect(() => {
+    const selectedUser = transformedArray.find((item) => item.label === value);
+
+    if (selectedUser) {
+      createChat([user._id, selectedUser.value]);
+    }
+  }, [value]);
   const { createChat } = useContext(GroupContext);
   return (
     <div className="container-box">
@@ -69,8 +76,10 @@ const Chat = () => {
         >
           <Autocomplete
             placeholder="Search"
-            data={["React", "Angular", "Vue", "Svelte"]}
+            data={transformedArray}
             style={{ width: "85%", textAlign: "center", marginLeft: "5px" }}
+            value={value}
+            onChange={setValue}
           />
           <ActionIcon
             variant="outline"

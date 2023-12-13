@@ -15,6 +15,8 @@ const FriendContextProvider = ({ children, user }) => {
   const [notfriends, setNotFriends] = useState(null);
   const [viewProfile, setViewProfile] = useState(false);
   const [userView, setUserView] = useState(null);
+  const [friendsRequests, setFriendRequests] = useState(null);
+  const [friendsRequestsWaiting, setFriendRequestsWaiting] = useState(null);
   useEffect(() => {
     const getFriends = async () => {
       if (user?._id) {
@@ -28,7 +30,9 @@ const FriendContextProvider = ({ children, user }) => {
           return console.log("Error Fetching User", response);
         }
 
-        setFriends(response);
+        setFriends(response.friends);
+        setFriendRequests(response.friendsRequest);
+        setFriendRequestsWaiting(response.friendsRequestWaitAccept);
       }
     };
     getFriends();
@@ -40,6 +44,9 @@ const FriendContextProvider = ({ children, user }) => {
       setNotFriends(users);
     }
   }, [friends]);
+  useEffect(() => {
+    console.log("friendsRequests", friendsRequests);
+  }, [friendsRequests]);
   const updateViewProfile = useCallback(() => {
     setViewProfile(!viewProfile);
   });
@@ -55,6 +62,8 @@ const FriendContextProvider = ({ children, user }) => {
         updateViewProfile,
         userView,
         updateUserView,
+        friendsRequests,
+        friendsRequestsWaiting,
       }}
     >
       {children}

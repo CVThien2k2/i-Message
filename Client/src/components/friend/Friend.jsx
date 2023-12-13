@@ -3,6 +3,7 @@ import {
   Anchor,
   Avatar,
   Badge,
+  Button,
   Group,
   Table,
   Text,
@@ -14,7 +15,7 @@ import {
   IconPhoneCall,
   IconUserPlus,
 } from "@tabler/icons-react";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { GroupContext } from "../../context/GroupContext";
 import { FriendContext } from "../../context/FriendContext";
 import { AuthContext } from "../../context/Authcontext";
@@ -27,6 +28,9 @@ const Friend = ({ user: use, isfriend }) => {
   const isOnline = onlineUsers.some((u) => u?.userId === use?._id);
   const { user } = useContext(AuthContext);
   const { callUser } = useContext(CallContext);
+  // let inRequestFriend = friendsRequests?.includes(use._id);
+  // const inRequestFriendWait = friendsRequestsWaiting?.includes(use._id);
+
   return (
     <>
       <Table.Tr key={use.name} className="TableRow">
@@ -62,14 +66,14 @@ const Friend = ({ user: use, isfriend }) => {
         </Table.Td>
         <Table.Td>
           <Group gap={10} justify="flex-end">
-            {!isfriend && (
+            {/* {!isfriend && (
               <ActionIcon variant="subtle" color="red">
                 <IconUserPlus
                   style={{ width: "35px", height: "35px" }}
                   stroke={1.5}
                 />
               </ActionIcon>
-            )}
+            )} */}
             <ActionIcon variant="subtle" color="green">
               <IconPhoneCall
                 style={{ width: "35px", height: "35px" }}
