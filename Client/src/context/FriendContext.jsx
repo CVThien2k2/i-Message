@@ -44,9 +44,7 @@ const FriendContextProvider = ({ children, user }) => {
       setNotFriends(users);
     }
   }, [friends]);
-  useEffect(() => {
-    console.log("friendsRequests", friendsRequests);
-  }, [friendsRequests]);
+  useEffect(() => {}, [friendsRequests]);
   const updateViewProfile = useCallback(() => {
     setViewProfile(!viewProfile);
   });

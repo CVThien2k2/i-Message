@@ -23,14 +23,11 @@ import { useNavigate } from "react-router-dom";
 import { CallContext } from "../../context/CallContext";
 const Friend = ({ user: use, isfriend }) => {
   const navigate = useNavigate();
-  const { onlineUsers, createChat } = useContext(GroupContext);
+  const { onlineUsers, createChat, userGroups } = useContext(GroupContext);
   const { updateViewProfile, updateUserView } = useContext(FriendContext);
   const isOnline = onlineUsers.some((u) => u?.userId === use?._id);
   const { user } = useContext(AuthContext);
   const { callUser } = useContext(CallContext);
-  // let inRequestFriend = friendsRequests?.includes(use._id);
-  // const inRequestFriendWait = friendsRequestsWaiting?.includes(use._id);
-
   return (
     <>
       <Table.Tr key={use.name} className="TableRow">
@@ -66,20 +63,31 @@ const Friend = ({ user: use, isfriend }) => {
         </Table.Td>
         <Table.Td>
           <Group gap={10} justify="flex-end">
-            {/* {!isfriend && (
+            {!isfriend && (
               <ActionIcon variant="subtle" color="red">
                 <IconUserPlus
                   style={{ width: "35px", height: "35px" }}
                   stroke={1.5}
                 />
               </ActionIcon>
-            )} */}
+            )}
             <ActionIcon variant="subtle" color="green">
               <IconPhoneCall
                 style={{ width: "35px", height: "35px" }}
                 stroke={1.5}
                 onClick={() => {
-                  callUser({ recipientUser: use, user });
+                  callUser({
+                    user,
+                    currenChat: {
+                      _id: user._id,
+                      name: use.name,
+                      members: [use._id, user._id],
+                      userCount: 2,
+                      avatar: use.avatar,
+                    },
+                    use,
+                  });
+                  window.open(`http://localhost:3030/${user._id}`, "_blank");
                 }}
               />
             </ActionIcon>

@@ -82,7 +82,12 @@ const ChatBox = () => {
                   gradient={{ from: "lime", to: "red", deg: 90 }}
                   color="blue"
                   onClick={() => {
-                    callUser({ recipientUser, user });
+                    callUser({ user, currenChat, recipientUser });
+
+                    window.open(
+                      `http://localhost:3030/${currenChat._id}`,
+                      "_blank"
+                    );
                   }}
                 />
 
@@ -119,7 +124,7 @@ const ChatBox = () => {
                   >
                     <Stack direction="horizontal">
                       {message?.user_id !== user?._id && (
-                        <img
+                        <Avatar
                           src={recipientUser?.avatar}
                           height="35px"
                           style={{ marginRight: "10px" }}

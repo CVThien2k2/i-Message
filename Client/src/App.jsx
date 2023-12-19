@@ -5,18 +5,14 @@ import { useContext, useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { io } from "socket.io-client";
 import "./App.scss";
-import {
-  default as CallVideo,
-  default as ToCalled,
-} from "./components/CallVideo";
 import Header from "./components/Header";
-import ReceiverCall from "./components/ReceiverCall";
-import ReceiverVideo from "./components/ReceiverVideo";
-import Profile from "./components/chat/Profile";
+import ReceiverCall from "./components/CallVideo/ReceiverCall";
+import CallVideo from "./components/CallVideo/CallVideo";
+import Profile from "./components/profile/Profile";
 import Setting from "./components/chat/Setting";
 import { ListFriend } from "./components/friend/ListFriend";
 import { AuthContext } from "./context/Authcontext";
-import { CallContextProvider } from "./context/CallContext";
+import { CallContext, CallContextProvider } from "./context/CallContext";
 import { GroupContextProvider } from "./context/GroupContext";
 import GroupChat from "./pages/Chat";
 import Login from "./pages/Login";
@@ -25,6 +21,7 @@ import FriendContextProvider from "./context/FriendContext";
 function App() {
   const [socket, setSocket] = useState(null);
   const { user } = useContext(AuthContext);
+
   useEffect(() => {
     if (!user) return;
     const newSocket = io("http://localhost:8081");
@@ -41,7 +38,6 @@ function App() {
             <Header />
             <Routes>
               {" "}
-              <Route path="/call" element={user ? <ToCalled /> : <Login />} />
               <Route
                 path="/message"
                 element={user ? <GroupChat /> : <Login />}
@@ -61,8 +57,6 @@ function App() {
               <Route path="/*" element={<Navigate to="/" />} />
             </Routes>
             <ReceiverCall />
-            <CallVideo />
-            <ReceiverVideo />
           </Stack>
         </FriendContextProvider>
       </CallContextProvider>
