@@ -45,7 +45,7 @@ class authController {
       const numberPhone = req.body.numberPhone;
       const gender = req.body.gender;
       let avatar = "";
-      if (gender == "female") {
+      if (gender === "female") {
         avatar =
           "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png";
       }

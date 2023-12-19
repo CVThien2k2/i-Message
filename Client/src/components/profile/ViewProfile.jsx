@@ -62,13 +62,24 @@ function ViewProfile() {
                   stroke={1.5}
                   color="red"
                   onClick={() => {
-                    callUser({ recipientUser: userView, user });
+                    callUser({
+                      user,
+                      currenChat: {
+                        _id: user._id,
+                        name: userView.name,
+                        members: [userView._id, user._id],
+                        userCount: 2,
+                        avatar: userView.avatar,
+                      },
+                      userView,
+                    });
+                    window.open(`http://localhost:3030/${user._id}`, "_blank");
                   }}
                 />
               </ActionIcon>
             </Group>
             <Group justify="center" style={{ margin: "20px 0px 20px 0px" }}>
-              <Text>Address: {userView.address} </Text>
+              <Text>Address: 395 Giải Phóng{userView.address} </Text>
             </Group>
           </Paper>
         </Modal.Body>

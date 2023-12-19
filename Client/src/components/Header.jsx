@@ -34,24 +34,23 @@ import { useLocation } from "react-router-dom";
 const tabs = ["Message", "Friend", "Profile"];
 function Header() {
   const location = useLocation();
-  const hideHeader = location.pathname === "/call";
   const theme = useMantineTheme();
   const [opened, { toggle }] = useDisclosure(false);
   const [activeTab, setActiveTab] = useState("Message");
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const navigate = useNavigate();
-  if (hideHeader) {
-    return null; // Trả về null nếu bạn muốn ẩn header
-  }
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab} key={tab}>
       {tab}
     </Tabs.Tab>
   ));
   const { user, logOutUser } = useContext(AuthContext);
-
+  const isCallPage = window.location.pathname.startsWith("/call/");
   return (
-    <div className={classes.header}>
+    <div
+      className={classes.header}
+      style={{ display: isCallPage ? "none" : "block" }}
+    >
       <Container className={classes.mainSection} size="md">
         <Group justify="space-between">
           <Burger

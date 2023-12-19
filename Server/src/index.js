@@ -29,9 +29,7 @@ const io = new Server(server, {
 });
 let onlineUsers = [];
 io.on("connection", (socket) => {
-  // console.log("new connection", socket.id);
   socket.on("addNewUser", (userId) => {
-    // !onlineUsers.some((user) => user.userId === userId) &&
     authService.updateOnline(userId, true);
     onlineUsers.push({
       userId,
@@ -75,13 +73,16 @@ io.on("connection", (socket) => {
       }
     }
   });
-  socket.on("callUser", (message) => {
-    const user = onlineUsers.find(
-      (user) => user.userId === message.recipientUser._id
-    );
-    if (user) {
-      io.to(user.socketId).emit("CallAccpected", message);
-    }
+  socket.on("call", (message) => {
+    const members = message.group.members;
+    members.forEach((user_id) => {
+      if (user_id !== message?.from?._id) {
+        const user = onlineUsers.find((user) => user.userId === user_id);
+        if (user) {
+          io.to(user.socketId).emit("call", message);
+        }
+      }
+    });
   });
   socket.on("createChat", (messages) => {
     const message = messages.newChatBox;
@@ -105,7 +106,6 @@ io.on("connection", (socket) => {
 
   socket.on("accept", (data) => {
     const toUser = data.caller;
-    // console.log(data.recipientUser._id);
     const receiverId = toUser._id;
 
     const user = onlineUsers.find((u) => u.userId === receiverId);
@@ -124,8 +124,7 @@ io.on("connection", (socket) => {
     const user = onlineUsers.find((u) => u.socketId === socket.id);
     onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
     authService.updateOnline(user?.userId, false);
-    // console.log("User disconnected", socket.id);
-    console.log("Online users after disconnect", onlineUsers);
+    // console.log("Online users after disconnect", onlineUsers);
     io.emit("getonlineUsers", onlineUsers);
   });
 });
