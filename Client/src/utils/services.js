@@ -1,4 +1,4 @@
-export const baseUrl = "https://technotes-api.onrender.com";
+export const baseUrl = "https://chatrealtime-api.onrender.com";
 
 export const postRequest = async (url, body) => {
   // console.log(body);
