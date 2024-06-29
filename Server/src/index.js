@@ -23,7 +23,7 @@ const server = app.listen(port, () => {
 });
 const io = new Server(server, {
   cors: {
-    origin: "http://chatrealtime.onrender.com",
+    origin: ["http://chatrealtime.onrender.com", "http://localhost:5173"],
     credentials: true,
   },
 });
