@@ -13,7 +13,6 @@ class authController {
   async loginUser(req, res) {
     try {
       const { email, password } = req.body;
-      console.log(email);
       let user = await authService.getOneUser(email);
       if (!user)
         return res
