@@ -13,9 +13,8 @@ class authController {
   async loginUser(req, res) {
     try {
       const { email, password } = req.body;
-      console.log(req.body);
+      console.log(email);
       let user = await authService.getOneUser(email);
-      console.log(user);
       if (!user)
         return res
           .status(400)
