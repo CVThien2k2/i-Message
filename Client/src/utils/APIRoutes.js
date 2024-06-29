@@ -1,4 +1,4 @@
-export const host = "http://localhost:8081";
+export const host = "https://technotes-api.onrender.com";
 
 export const setAvatarRoute = `${host}/api/auth/setAvatar`;
 export const allUsersRoute = `${host}/api/auth/allusers`;
