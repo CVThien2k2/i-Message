@@ -1,4 +1,4 @@
-export const baseUrl = "http://localhost:8081/api/v1/";
+export const baseUrl = "https://chatrealtime-api.onrender.com/api/v1/";
 export const apiKey = "123456";
 
 import { useAuth } from "../context";
