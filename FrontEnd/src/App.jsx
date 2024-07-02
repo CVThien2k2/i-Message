@@ -5,14 +5,16 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import { useAuth } from "./context";
 function App() {
-  const {isAuthenticated} = useAuth()
+  const { isAuthenticated } = useAuth();
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={"/*"} element={!isAuthenticated?<Navigate to="/login"/>: <Navigate to="/dashboard"/>} />
+        <Route path={"/*"} element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        {/* <Route path={"/*"} element={!isAuthenticated?<Navigate to="/login"/>: <Navigate to="/dashboard"/>} />
         <Route path={"/dashboard"} element={!isAuthenticated?<Navigate to="/login"/>: <Dashboard />} />
         <Route path="/login" element={isAuthenticated?<Navigate to="/dashboard"/>: <Login/>} />
-        <Route path="/signup" element={isAuthenticated?<Navigate to="/dashboard"/>: <Register/>} />
+        <Route path="/signup" element={isAuthenticated?<Navigate to="/dashboard"/>: <Register/>} /> */}
       </Routes>
     </BrowserRouter>
   );
