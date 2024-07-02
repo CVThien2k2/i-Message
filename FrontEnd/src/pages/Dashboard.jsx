@@ -22,7 +22,7 @@ export function Dashboard() {
           <Text component="span" className={classes.highlight} inherit>
             để có thể
           </Text>{" "}
-          trò chuyện với mọi người! hehehe
+          trò chuyện với mọi người!
         </Title>
 
         <Container p={0} size={600}>

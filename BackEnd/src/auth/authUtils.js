@@ -13,10 +13,10 @@ const createTokenPair = async (payload, privateKey, publicKey) => {
   try {
     //accessToken
     const accessToken = await JWT.sign(payload, publicKey, {
-      expiresIn: "10s",
+      expiresIn: "15m",
     });
     const refreshToken = await JWT.sign(payload, privateKey, {
-      expiresIn: "20s",
+      expiresIn: "1d",
     });
     JWT.verify(accessToken, publicKey, (err, decode) => {
       if (err) {
