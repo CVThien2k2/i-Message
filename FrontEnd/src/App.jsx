@@ -9,12 +9,30 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={"/*"} element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        {/* <Route path={"/*"} element={!isAuthenticated?<Navigate to="/login"/>: <Navigate to="/dashboard"/>} />
-        <Route path={"/dashboard"} element={!isAuthenticated?<Navigate to="/login"/>: <Dashboard />} />
-        <Route path="/login" element={isAuthenticated?<Navigate to="/dashboard"/>: <Login/>} />
-        <Route path="/signup" element={isAuthenticated?<Navigate to="/dashboard"/>: <Register/>} /> */}
+        <Route
+          path={"/*"}
+          element={
+            !isAuthenticated ? (
+              <Navigate to="/login" />
+            ) : (
+              <Navigate to="/dashboard" />
+            )
+          }
+        />
+        <Route
+          path={"/dashboard"}
+          element={!isAuthenticated ? <Navigate to="/login" /> : <Dashboard />}
+        />
+        <Route
+          path="/login"
+          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />}
+        />
+        <Route
+          path="/signup"
+          element={
+            isAuthenticated ? <Navigate to="/dashboard" /> : <Register />
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
