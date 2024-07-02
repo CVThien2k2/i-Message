@@ -7,10 +7,6 @@ import "@mantine/notifications/styles.css";
 import { AuthProvider } from "./context";
 import { Notifications } from "@mantine/notifications";
 
-if (process.env.NODE_ENV === "production") {
-  disableReactDevTools();
-}
-
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <MantineProvider>
