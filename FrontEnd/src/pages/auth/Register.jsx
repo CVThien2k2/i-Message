@@ -17,6 +17,7 @@ import { GoogleButton } from "../../styles/GoogleButton";
 import { FacebookButton } from "../../styles/FacebookButton";
 import useNotify from "../../hooks/useNotify";
 import useAccess from "../../hooks/useAuth";
+import { baseUrl } from "../../utils/services";
 
 const Register = () => {
   const { notifyResult } = useNotify();
@@ -146,7 +147,14 @@ const Register = () => {
               <Text c="dimmed" size="sm" ta="center">
                 Hoặc đăng ký tài khoản với{" "}
               </Text>
-              <GoogleButton radius="xl">Google</GoogleButton>
+              <GoogleButton
+                radius="xl"
+                onClick={() => {
+                  window.location.href = `${baseUrl}/signup/google`;
+                }}
+              >
+                Google
+              </GoogleButton>
               <FacebookButton radius="xl">Facebook</FacebookButton>
             </Stack>
           </Paper>

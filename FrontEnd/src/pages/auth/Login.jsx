@@ -16,10 +16,35 @@ import { GoogleButton } from "../../styles/GoogleButton";
 import { FacebookButton } from "../../styles/FacebookButton";
 import useAccess from "../../hooks/useAuth";
 import useNotify from "../../hooks/useNotify";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { baseUrl } from "../../utils/services";
 
 const Login = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { notifyResult } = useNotify();
-  const { isLoading, loginUser } = useAccess();
+  const { isLoading, loginUser, loginUserWithGoogle } = useAccess();
+
+  useEffect(() => {
+    const handleGoogleLogin = async () => {
+      if (searchParams.get("token")) {
+        const res = await loginUserWithGoogle({
+          token: searchParams.get("token"),
+        });
+        if (res.status) {
+          navigate(`/generate-password?token=${res.metadata.token}`);
+        } else {
+          notifyResult("Đăng nhập", res, false);
+          navigate("/login");
+        }
+      } else {
+        navigate("/login");
+      }
+    };
+
+    handleGoogleLogin();
+  }, [searchParams, navigate]);
 
   const form = useForm({
     initialValues: {
@@ -77,7 +102,14 @@ const Login = () => {
 
           <Paper withBorder shadow="md" p={30} mt={30} radius="md">
             <Group grow mb="md" mt="md">
-              <GoogleButton radius="xl">Google</GoogleButton>
+              <GoogleButton
+                onClick={() => {
+                  window.location.href = `${baseUrl}/login/google`;
+                }}
+                radius="xl"
+              >
+                Google
+              </GoogleButton>
               <FacebookButton radius="xl">Facebook</FacebookButton>
             </Group>
             <TextInput

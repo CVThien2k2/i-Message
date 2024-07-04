@@ -41,5 +41,7 @@ app.use((error, req, res, next) => {
 // initsocket
 const ServerSocket = require("./socket");
 ServerSocket(app);
+//passpost
+require("./passport");
 
 module.exports = app;

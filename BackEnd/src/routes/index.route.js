@@ -6,8 +6,8 @@ const accessRouter = require("./access.route");
 const { asyncHandler } = require("../utils/asyncHandler");
 
 function route(app) {
-  app.use(asyncHandler(apiKey));
-  app.use(permisstions("0000"));
+  // app.use(asyncHandler(apiKey));
+  // app.use(permisstions("0000"));
 
   app.use("/api/v1", accessRouter);
   app.use("/auth", userRouter);

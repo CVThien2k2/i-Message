@@ -3,6 +3,9 @@ class userService {
   findUserByEmail = async ({ email }) => {
     return await userModel.findOne({ email }).lean();
   };
+  findUserByNumber = async ({ numberPhone }) => {
+    return await userModel.findOne({ numberPhone: numberPhone }).lean();
+  };
   getAllUsers = async () => {
     return await userModel.find();
   };
@@ -36,6 +39,9 @@ class userService {
       },
       { new: true }
     );
+  };
+  findByIdAndUpdate = async (userId, object) => {
+    return await userModel.findByIdAndUpdate(userId, object);
   };
 }
 module.exports = new userService();

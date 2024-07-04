@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const validator = require("validator");
 const keyTokenService = require("./keyToken.service");
-const { createTokenPair } = require("../auth/authUtils");
+const { createTokenPair, hashString } = require("../auth/authUtils");
 const { getInfoData } = require("../utils");
 const { verifyJWT } = require("../auth/authUtils");
 const {
@@ -14,13 +14,13 @@ const userService = require("./user.service");
 
 class accessService {
   login = async ({ email, password, refreshToken = null }) => {
-    const foundUser = await userModel.findOne({ email });
+    const foundUser = await userService.findUserByEmail({ email: email });
     if (!foundUser) {
       throw new BadRequestError("User not registered!");
     }
+
     const isValidPassword = await bcrypt.compare(password, foundUser.password);
     if (!isValidPassword) throw new AuthFailureError("Authentication error");
-
     const privateKey = crypto.randomBytes(64).toString("hex");
     const publicKey = crypto.randomBytes(64).toString("hex");
 
@@ -40,51 +40,61 @@ class accessService {
       user: getInfoData({
         fields: [
           "_id",
-          "name",
           "email",
+          "givenName",
+          "familyName",
           "numberPhone",
           "gender",
           "address",
           "avatar",
+          "doB",
+          "typeLogin",
         ],
         object: foundUser,
       }),
       tokens,
     };
   };
-  signUp = async (req) => {
-    let password = req.password;
-    const email = req.email;
-    const name = req.name;
-    const numberPhone = req.numberPhone;
-    const gender = req.gender;
-    let avatar = "";
-    if (gender === "female") {
-      avatar =
-        "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png";
-    }
-    let user = await userModel.findOne({ email: email }).lean();
+  signUp = async ({
+    email,
+    numberPhone = null,
+    givenName,
+    familyName,
+    gender = null,
+    address = null,
+    avatar = null,
+    doB = null,
+    password = null,
+    typeLogin,
+  }) => {
+    let user = await userService.findUserByEmail({ email: email });
     if (user) {
       throw new BadRequestError("Email already in use");
     }
-    user = await userModel.findOne({ numberPhone: numberPhone }).lean();
+    if (!typeLogin && numberPhone)
+      user = await userService.findUserByNumber({ numberPhone: numberPhone });
     if (user) {
       throw new BadRequestError("Number already in use");
     }
-    if (!name || !email || !password || !numberPhone) {
-      throw new BadRequestError("Email already in use");
-    }
     if (!validator.isEmail(email)) {
-      throw new BadRequestError("Email already in use");
+      throw new BadRequestError("Email error");
     }
-    if (!validator.isStrongPassword(password)) {
-      throw new BadRequestError("Weak password!");
+    if (password) {
+      password = hashString(password);
     }
-    const salt = await bcrypt.genSalt(10);
-    password = await bcrypt.hash(password, salt);
-    req.password = password;
+    const newUser = await userModel.create({
+      email,
+      numberPhone,
+      givenName,
+      familyName,
+      gender,
+      address,
+      avatar,
+      doB,
+      password,
+      typeLogin,
+    });
 
-    const newUser = await userModel.create(req);
     if (newUser) {
       const privateKey = crypto.randomBytes(64).toString("hex");
       const publicKey = crypto.randomBytes(64).toString("hex");
@@ -105,12 +115,15 @@ class accessService {
         user: getInfoData({
           fields: [
             "_id",
-            "name",
             "email",
+            "givenName",
+            "familyName",
             "numberPhone",
             "gender",
             "address",
             "avatar",
+            "doB",
+            "typeLogin",
           ],
           object: newUser,
         }),
@@ -152,17 +165,75 @@ class accessService {
       user: getInfoData({
         fields: [
           "_id",
-          "name",
           "email",
+          "givenName",
+          "familyName",
           "numberPhone",
           "gender",
           "address",
           "avatar",
+          "doB",
+          "typeLogin",
         ],
         object: foundUser,
       }),
       tokens,
     };
+  };
+  getUserByEmail = async (email) => {
+    return await userService.findUserByEmail({ email: email });
+  };
+  loginWithGoogle = async (user) => {
+    const privateKey = crypto.randomBytes(64).toString("hex");
+    const publicKey = crypto.randomBytes(64).toString("hex");
+
+    const tokens = await createTokenPair(
+      { userId: user._id, email: user.email },
+      privateKey,
+      publicKey
+    );
+    await keyTokenService.createKeyToken({
+      publicKey,
+      privateKey,
+      userId: user._id,
+      refreshToken: tokens.refreshToken,
+    });
+
+    return {
+      user: getInfoData({
+        fields: [
+          "_id",
+          "email",
+          "givenName",
+          "familyName",
+          "numberPhone",
+          "gender",
+          "address",
+          "avatar",
+          "doB",
+          "typeLogin",
+        ],
+        object: user,
+      }),
+      tokens,
+    };
+  };
+  generatePassword = async ({ token, password }) => {
+    const { email, userId } = verifyJWT(
+      token,
+      process.env.PRIVATE_KEY_GENERATE_PASS
+    );
+    const foundUser = await userService.findUserByEmail({ email: email });
+    if (!foundUser) throw new BadRequestError("User not registered!");
+    if (foundUser.password)
+      throw new BadRequestError("Password is already in place");
+    if (!password) throw new BadRequestError("Password is empty");
+    const user = await userService.findByIdAndUpdate(userId, {
+      password: await hashString(password),
+      active: true,
+    });
+    if (!user) throw new BadRequestError("Error generate password");
+    return user;
   };
 }
 

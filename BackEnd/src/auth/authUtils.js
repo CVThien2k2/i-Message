@@ -3,6 +3,7 @@ const JWT = require("jsonwebtoken");
 const { asyncHandler } = require("../utils/asyncHandler");
 const { AuthFailureError, NotFoundError } = require("../utils/error.response");
 const { findByUserId } = require("../services/keyToken.service");
+const bcrypt = require("bcrypt");
 const HEADER = {
   API_KEY: "x-api-key",
   AUTHORIZATION: "authorization",
@@ -68,12 +69,23 @@ const authenticationRefreshToken = asyncHandler(async (req, res, next) => {
   }
 });
 
-const verifyJWT = async (token, keySecret) => {
-  return await JWT.verify(token, keySecret);
+const verifyJWT = (token, keySecret) => {
+  return JWT.verify(token, keySecret);
+};
+const signJWT = (payload, privateKey) => {
+  return JWT.sign(payload, privateKey, {
+    expiresIn: "1d",
+  });
+};
+const hashString = async (string) => {
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(string, salt);
 };
 module.exports = {
   createTokenPair,
   authentication,
   verifyJWT,
   authenticationRefreshToken,
+  hashString,
+  signJWT,
 };
