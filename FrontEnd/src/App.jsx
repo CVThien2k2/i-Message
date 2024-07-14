@@ -4,7 +4,7 @@ import { Dashboard } from "./pages/Dashboard";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import { useAuth } from "./context";
-import ResetPassword from "./pages/auth/ResetPassword";
+import NewPassword from "./pages/auth/NewPassword";
 import { NotFound } from "./pages/auth/NotFound";
 import VerifyOtp from "./pages/auth/VerifyOtp";
 import { ForgotPassword } from "./pages/auth/ForgotPassword";
@@ -29,7 +29,7 @@ function App() {
             isAuthenticated ? <Navigate to="/dashboard" /> : <Register />
           }
         />
-        <Route path="/reset-password/*" element={<ResetPassword />} />
+        <Route path="/reset-password/*" element={<NewPassword />} />
         <Route path="/verify-otp/*" element={<VerifyOtp />} />
         <Route
           path="/not-found-account/*"
