@@ -7,7 +7,7 @@ import { useAuth } from "./context";
 import { NotFound } from "./pages/auth/NotFound";
 import { ForgotPassword } from "./pages/auth/ForgotPassword";
 import VerifyOtp from "./pages/auth/VerifyOtp";
-import { ResetPassword } from "./pages/auth/ResetPassword";
+// import { ResetPassword } from "./pages/auth/ResetPassword";
 function App() {
   const { isAuthenticated } = useAuth();
   return (
@@ -29,7 +29,7 @@ function App() {
             isAuthenticated ? <Navigate to="/dashboard" /> : <Register />
           }
         />
-        <Route path="/reset-password/*" element={<ResetPassword />} />
+        {/* <Route path="/reset-password/*" element={<ResetPassword />} /> */}
         <Route path="/verify-otp/*" element={<VerifyOtp />} />
         <Route
           path="/not-found-account/*"
