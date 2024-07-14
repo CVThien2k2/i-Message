@@ -86,6 +86,7 @@ const useAccess = () => {
   };
   const sendOtp = async (value) => {
     try {
+      setIsLoading(true);
       const response = await postRequest(
         `${baseUrl}/send-otp`,
         JSON.stringify(value)
@@ -99,6 +100,7 @@ const useAccess = () => {
   };
   const forgotPassword = async (value) => {
     try {
+      setIsLoading(true);
       const response = await postRequest(
         `${baseUrl}/forgot-password`,
         JSON.stringify(value)
@@ -112,6 +114,7 @@ const useAccess = () => {
   };
   const resetPassword = async (value) => {
     try {
+      setIsLoading(true);
       const response = await postRequest(
         `${baseUrl}/reset-password`,
         JSON.stringify(value)
