@@ -7,7 +7,6 @@ import {
   Container,
   LoadingOverlay,
 } from "@mantine/core";
-import classes from "../../styles/GeneratePassword.module.css";
 import { useForm } from "@mantine/form";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import useAccess from "../../hooks/useAuth";
