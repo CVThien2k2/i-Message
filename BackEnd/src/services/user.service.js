@@ -1,8 +1,9 @@
-const userModel = require("../models/user.model");
+const {
+  userModel,
+  oAuthAcountModel,
+  registerAcountModel,
+} = require("../models/user.model");
 class userService {
-  findUserByEmail = async ({ email }) => {
-    return await userModel.findOne({ email }).lean();
-  };
   findUserByNumber = async ({ numberPhone }) => {
     return await userModel.findOne({ numberPhone: numberPhone }).lean();
   };

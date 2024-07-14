@@ -10,6 +10,7 @@ import {
   Container,
   Group,
   Button,
+  LoadingOverlay,
 } from "@mantine/core";
 
 import { GoogleButton } from "../../styles/GoogleButton";
@@ -24,20 +25,23 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { notifyResult } = useNotify();
-  const { isLoading, loginUser, loginUserWithGoogle } = useAccess();
+  const { isLoading, loginUser, loginUserWithOAuth } = useAccess();
 
   useEffect(() => {
     const handleGoogleLogin = async () => {
       if (searchParams.get("token")) {
-        const res = await loginUserWithGoogle({
+        const response = await loginUserWithOAuth({
           token: searchParams.get("token"),
         });
-        if (res.status) {
-          navigate(`/generate-password?token=${res.metadata.token}`);
-        } else {
-          notifyResult("Đăng nhập", res, false);
-          navigate("/login");
-        }
+        if (response)
+          if (response.code == 200) {
+            notifyResult("Đăng nhập", responses.message, true);
+            navigate("/dashboard");
+          } else {
+            notifyResult("Đăng nhập", responses.message, false);
+            navigate("/login");
+          }
+        else navigate("/login");
       } else {
         navigate("/login");
       }
@@ -48,17 +52,17 @@ const Login = () => {
 
   const form = useForm({
     initialValues: {
-      email: "",
+      user_name: "",
       password: "",
     },
     validateInputOnBlur: true,
     validate: {
-      email: (val) =>
+      user_name: (val) =>
         val === 0
           ? "Trường này là bắt buộc."
-          : /^\S+@\S+$/.test(val)
+          : /^\S+@\S+$/.test(val) || /^[0-9]+$/.test(val)
           ? null
-          : "Email không đúng định dạng",
+          : "Email hoặc số điện thoại không đúng định dạng",
       password: (val) =>
         val.length == 0
           ? "Trường này là bắt buộc"
@@ -74,10 +78,12 @@ const Login = () => {
     if (errors.hasErrors) {
       notifyResult("Đăng nhập", "Vui lòng điền đúng định dạng", false);
     }
-    const error = await loginUser(form.values);
-    if (error) {
-      notifyResult("Đăng nhập", error, false);
-    } else notifyResult("Đăng nhập", "Đăng nhập thành công", true);
+    const response = await loginUser(form.values);
+    if (response) {
+      if (response.code == "200")
+        notifyResult("Đăng nhập", response.message, true);
+      else notifyResult("Đăng nhập", response.message, false);
+    } else notifyResult("Server Error", null, true);
   };
   return (
     <>
@@ -92,15 +98,25 @@ const Login = () => {
           >
             Chào mừng tới iMessenger!
           </Title>
-
           <Text c="dimmed" size="sm" ta="center" mt={5}>
             Bạn chưa có tài khoản?{" "}
             <Anchor href="/signup" size="sm">
               Tạo mới tài khoản
             </Anchor>
           </Text>
-
-          <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+          <Paper
+            withBorder
+            shadow="md"
+            p={30}
+            mt={30}
+            radius="md"
+            pos="relative"
+          >
+            <LoadingOverlay
+              visible={isLoading}
+              zIndex={1000}
+              overlayProps={{ radius: "sm", blur: 2 }}
+            />
             <Group grow mb="md" mt="md">
               <GoogleButton
                 onClick={() => {
@@ -110,13 +126,20 @@ const Login = () => {
               >
                 Google
               </GoogleButton>
-              <FacebookButton radius="xl">Facebook</FacebookButton>
+              <FacebookButton
+                radius="xl"
+                onClick={() => {
+                  window.location.href = `${baseUrl}/login/facebook`;
+                }}
+              >
+                Facebook
+              </FacebookButton>
             </Group>
             <TextInput
-              label="Email"
-              placeholder="yourEmail@gmail.com"
+              label="Tài khoản"
+              placeholder="Số điện thoại hoặc email."
               required
-              {...form.getInputProps("email")}
+              {...form.getInputProps("user_name")}
             />
             <PasswordInput
               label="Mật khẩu"
@@ -128,7 +151,9 @@ const Login = () => {
 
             <Group justify="space-between" mt="lg">
               <Checkbox label="Lưu đăng nhập?" />
-              <Anchor size="sm">Quên mật khẩu?</Anchor>
+              <Anchor size="sm" href="/forgot-password">
+                Quên mật khẩu?
+              </Anchor>
             </Group>
             <Button type="submit" fullWidth mt="xl" loading={isLoading}>
               Đăng nhập

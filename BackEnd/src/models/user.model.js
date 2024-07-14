@@ -1,35 +1,54 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const model = mongoose.model;
 
 const DOCUMENT_NAME = "User";
 const COLLECTION_NAME = "Users";
 const UserSchema = new Schema(
   {
-    email: { type: String, trim: true, required: true, unique: true },
-    numberPhone: { type: Number },
-    givenName: { type: String, required: true },
-    familyName: { type: String, required: true },
-    gender: { type: String, default: "unknow" },
-    address: { type: String },
+    email: { type: String },
+    number_phone: { type: Number },
+    given_name: { type: String, required: true },
+    family_name: { type: String, required: true },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other", "unknow"],
+      default: "unknow",
+    },
+    address: { type: Array },
     avatar: { type: String },
     doB: { type: Number },
-    role: { type: String, default: "user" },
-    password: { type: String, minLength: 6, maxLength: 1000 },
-    typeLogin: {
+    role: {
       type: String,
-      required: true,
-      enum: ["imessage", "google", "facebook"],
+      enum: ["user", "admin"],
+      default: "user",
     },
     active: {
       type: Boolean,
       default: false,
     },
-    friends: { type: Array, default: [] },
-    friendsRequest: { type: Array, default: [] },
-    friendsRequestWaitAccept: { type: Array, default: [] },
-    isOnline: { type: Boolean, default: true },
   },
   { collection: COLLECTION_NAME, timestamps: true }
 );
+const RegisterAcountSchema = new Schema(
+  {
+    user: { type: Schema.Types.ObjectId, ref: "User" },
+    user_name: { type: String, required: true },
+    password: { type: String, required: true },
+  },
+  { collection: "Register_Acount", timestamps: true }
+);
+const OAuthAcountSchema = new Schema(
+  {
+    user: { type: Schema.Types.ObjectId, ref: "User" },
+    type: { type: String, enum: ["google", "facebook"] },
+    provider_id: { type: String, required: true, unique: true },
+  },
+  { collection: "OAuth_Acount", timestamps: true }
+);
 
-module.exports = mongoose.model(DOCUMENT_NAME, UserSchema);
+module.exports = {
+  userModel: model(DOCUMENT_NAME, UserSchema),
+  registerAcountModel: model("Register_Acounts", RegisterAcountSchema),
+  oAuthAcountModel: model("OAuth_Acounts", OAuthAcountSchema),
+};

@@ -6,10 +6,18 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const {
   authentication,
   authenticationRefreshToken,
+  verifyOtp,
 } = require("../auth/authUtils");
-
+//Resetpassword
+router.post(
+  "/forgot-password",
+  verifyOtp,
+  asyncHandler(accessController.forgotPassword)
+);
+router.post("/reset-password", asyncHandler(accessController.resetPassword));
 //Login with app
-router.post("/signup", asyncHandler(accessController.signUp));
+router.post("/send-otp", asyncHandler(accessController.sendOtp));
+router.post("/signup", verifyOtp, asyncHandler(accessController.signUp));
 router.post("/login", asyncHandler(accessController.login));
 //Login & register with google
 router.get(
@@ -34,17 +42,39 @@ router.get(
       next();
     })(req, res, next);
   },
-  asyncHandler(accessController.authWithGoogle)
+  asyncHandler(accessController.authWithOAuth)
+);
+//Login with facebook
+router.get(
+  "/signup/facebook",
+  passport.authenticate("facebook", {
+    scope: "email",
+    state: "signup",
+  })
+);
+router.get(
+  "/login/facebook",
+  passport.authenticate("facebook", {
+    scope: "email",
+    state: "login",
+  })
 );
 
-router.post("/login/google", asyncHandler(accessController.loginWithGoogle));
-router.post(
-  "/generate-password/",
-  asyncHandler(accessController.generatePassword)
+router.get(
+  "/auth/facebook/callback",
+  (req, res, next) => {
+    passport.authenticate("facebook", (err, profile) => {
+      req.profile = profile;
+      next();
+    })(req, res, next);
+  },
+  asyncHandler(accessController.authWithOAuth)
 );
-
+//Login sau khi đăng nhập bằng google và yêu cầu cài password
+router.post("/oauth/login", asyncHandler(accessController.loginWithOAuth));
+//getToken
 router.post(
-  "/getToken",
+  "/refreshToken",
   authenticationRefreshToken,
   asyncHandler(accessController.handlerRefreshToken)
 );

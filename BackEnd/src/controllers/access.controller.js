@@ -3,7 +3,12 @@ const bcrypt = require("bcrypt");
 const { OK, CREATED, SuccessResponse } = require("../utils/success.response");
 const JWT = require("jsonwebtoken");
 const { verifyJWT, signJWT } = require("../auth/authUtils");
-const { NotFoundError } = require("../utils/error.response");
+const {
+  NotFoundError,
+  AuthFailureError,
+  ConflictRequestError,
+  BadRequestError,
+} = require("../utils/error.response");
 
 class accessController {
   async login(req, res, next) {
@@ -16,14 +21,16 @@ class accessController {
     new CREATED({
       message: "Register OK!",
       metadata: await accessService.signUp({
-        email: req.body.email,
-        numberPhone: req.body.numberPhone,
-        givenName: req.body.givenName,
-        familyName: req.body.familyName,
-        gender: req.body.gender,
-        doB: req.body.doB,
-        password: req.body.password,
-        typeLogin: "imessage",
+        user_name: req.data.user_name,
+        given_name: req.data.given_name,
+        family_name: req.data.family_name,
+        gender: req.data.gender,
+        doB: req.data.doB,
+        password: req.data.password,
+        role: "user",
+        active: false,
+        avatar: req.data.avatar,
+        address: req.data.address,
       }),
     }).send(res);
   }
@@ -43,80 +50,99 @@ class accessController {
       }),
     }).send(res);
   }
-  async authWithGoogle(req, res, next) {
+  async authWithOAuth(req, res, next) {
     const state = req.query.state;
     const profile = req.profile;
     if (state === "login") {
-      const user = await accessService.getUserByEmail(profile.emails[0].value);
-      if (!user) {
+      const accountOAuth = await accessService.getOAuthAccountByProvider(
+        profile.id
+      );
+      if (!accountOAuth) {
         res.redirect(
           `${process.env.URL_CLIENT}/not-found-account?state=not-found-account`
         );
       } else {
         const token = await signJWT(
-          { email: user.email },
+          {
+            provider_id: profile.id,
+          },
           process.env.PRIVATE_KEY_AUTH
         );
         res.redirect(`${process.env.URL_CLIENT}/login?token=${token}`);
       }
     } else if (state === "signup") {
-      const foundUser = await accessService.getUserByEmail(
-        profile.emails[0].value
+      let accountOAuth = await accessService.getOAuthAccountByProvider(
+        profile.id
       );
-      if (foundUser) {
+      if (accountOAuth) {
         res.redirect(
           `${process.env.URL_CLIENT}/account-registered?state=account-registered`
         );
       } else {
-        const { user } = await accessService.signUp({
-          email: profile.emails[0].value,
-          givenName: profile.name.givenName,
-          familyName: profile.name.familyName,
-          avatar: profile.photos[0].value,
-          typeLogin: "google",
-        });
-        if (user) {
+        const accountOAuth = await accessService.signupWithOAuth(profile);
+        if (accountOAuth) {
           const token = await signJWT(
-            { email: user.email },
+            {
+              provider_id: accountOAuth.provider_id,
+            },
             process.env.PRIVATE_KEY_AUTH
           );
           res.redirect(`${process.env.URL_CLIENT}/login?token=${token}`);
+        } else {
+          res.redirect(
+            `${process.env.URL_CLIENT}/account-registered?state=account-registered`
+          );
         }
       }
     }
   }
-  async loginWithGoogle(req, res, next) {
+  async loginWithOAuth(req, res, next) {
     const decoded = verifyJWT(req.body.token, process.env.PRIVATE_KEY_AUTH);
-    const { email } = decoded;
-    if (!email) throw new AuthFailureError("Login failed");
-    const foundUser = await accessService.getUserByEmail(email);
-    if (!foundUser) throw new AuthFailureError("Login failed");
-    if (foundUser.password) {
-      new SuccessResponse({
-        message: "Login success!",
-        metadata: await accessService.loginWithGoogle(foundUser),
-      }).send(res);
-    } else {
-      const token = await signJWT(
-        { email: email, userId: foundUser._id },
-        process.env.PRIVATE_KEY_GENERATE_PASS
-      );
-      new SuccessResponse({
-        message: "Password not initialized",
-        code: 404,
-        status: "error",
-        metadata: { token: token },
-      }).send(res);
-    }
-  }
-  async generatePassword(req, res, next) {
-    const user = await accessService.generatePassword(req.body);
+    const { provider_id } = decoded;
+    const foundAccount = await accessService.getOAuthAccountByProvider(
+      provider_id
+    );
+    if (!foundAccount) throw new AuthFailureError("Login failed");
     new SuccessResponse({
       message: "Login success!",
-      metadata: await accessService.login({
-        email: user.email,
-        password: req.body.password,
-      }),
+      metadata: await accessService.loginWithOAuth(foundAccount),
+    }).send(res);
+  }
+  async forgotPassword(req, res, next) {
+    const token = await JWT.sign(
+      { user_name: req.data.user_name },
+      process.env.PRIVATE_KEY_RESET_PASSWORD,
+      {
+        expiresIn: "5m",
+      }
+    );
+    new SuccessResponse({
+      message: "Verify otp success!",
+      metadata: { token: token },
+    }).send(res);
+  }
+  async resetPassword(req, res, next) {
+    const { user_name } = await JWT.verify(
+      req.body.token,
+      process.env.PRIVATE_KEY_RESET_PASSWORD,
+      {
+        expiresIn: "5m",
+      }
+    );
+    const account = await accessService.resetPassword(
+      user_name,
+      req.body.password
+    );
+    new SuccessResponse({
+      message: "Reset password success!",
+      metadata: account,
+    }).send(res);
+  }
+  async sendOtp(req, res, next) {
+    const token = await accessService.sendOtp(req.body);
+    new SuccessResponse({
+      message: "OTP has been sent!",
+      metadata: { token: token },
     }).send(res);
   }
 }

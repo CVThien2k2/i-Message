@@ -4,14 +4,21 @@ import { Dashboard } from "./pages/Dashboard";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import { useAuth } from "./context";
-import { GeneratePassword } from "./pages/auth/GeneratePassword";
 import { NotFound } from "./pages/auth/NotFound";
+import { ForgotPassword } from "./pages/auth/ForgotPassword";
+import VerifyOtp from "./pages/auth/VerifyOtp";
+import { ResetPassword } from "./pages/auth/resetPassword";
 function App() {
   const { isAuthenticated } = useAuth();
   return (
     <BrowserRouter>
       <Routes>
+        <Route path={"/"} element={<Dashboard />} />
         <Route path={"/dashboard"} element={<Dashboard />} />
+        <Route
+          path={"/forgot-password"}
+          element={isAuthenticated ? <Dashboard /> : <ForgotPassword />}
+        />
         <Route
           path="/login/*"
           element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />}
@@ -22,16 +29,8 @@ function App() {
             isAuthenticated ? <Navigate to="/dashboard" /> : <Register />
           }
         />
-        <Route
-          path="/generate-password/*"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/dashboard" />
-            ) : (
-              <GeneratePassword />
-            )
-          }
-        />
+        <Route path="/reset-password/*" element={<ResetPassword />} />
+        <Route path="/verify-otp/*" element={<VerifyOtp />} />
         <Route
           path="/not-found-account/*"
           element={

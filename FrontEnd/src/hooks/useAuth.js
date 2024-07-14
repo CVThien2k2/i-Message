@@ -1,6 +1,6 @@
 import { useAuth } from "../context";
 import { useState } from "react";
-import { baseUrl, apiKey } from "../utils/services";
+import { baseUrl } from "../utils/services";
 import services from "../utils/services";
 import { useNavigate } from "react-router-dom";
 const useAccess = () => {
@@ -9,45 +9,21 @@ const useAccess = () => {
   const [isLoading, setIsLoading] = useState(null);
   const { postRequest } = services();
 
-  const generatePassword = async (values) => {
+  const loginUserWithOAuth = async (values) => {
     try {
       setIsLoading(true);
-      console.log(values);
       const response = await postRequest(
-        `${baseUrl}/generate-password`,
+        `${baseUrl}/oauth/login`,
         JSON.stringify(values)
       );
       if (response)
         if (response?.code == "200") {
           const { user, tokens } = response.metadata;
           login(tokens, user);
-        } else return response.message;
+        }
+      return response;
     } catch (e) {
-      return "Có lỗi xảy ra khi kết nối tới máy chủ.";
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const loginUserWithGoogle = async (values) => {
-    try {
-      setIsLoading(true);
-      const response = await postRequest(
-        `${baseUrl}/login/google`,
-        JSON.stringify(values)
-      );
-      if (response)
-        if (response?.code == "200") {
-          const { user, tokens } = response.metadata;
-          login(tokens, user);
-        } else if (
-          response.code == "404" &&
-          response.message == "Password not initialized"
-        ) {
-          return response;
-        } else return "Có lỗi xảy ra khi kết nối tới máy chủ.";
       return null;
-    } catch (e) {
-      return "Có lỗi xảy ra khi kết nối tới máy chủ.";
     } finally {
       setIsLoading(false);
     }
@@ -57,20 +33,15 @@ const useAccess = () => {
       setIsLoading(true);
       const response = await postRequest(
         `${baseUrl}/login`,
-        JSON.stringify(values),
-        apiKey
+        JSON.stringify(values)
       );
-      if (response)
-        if (response?.code == "200") {
-          const { user, tokens } = response.metadata;
-          login(tokens, user);
-        } else {
-          return response?.message;
-        }
-      else return "Có lỗi xảy ra khi kết nối tới máy chủ.";
-      return null;
+      if (response?.code == "200") {
+        const { user, tokens } = response.metadata;
+        login(tokens, user);
+      }
+      return response;
     } catch (e) {
-      return "Có lỗi xảy ra khi kết nối tới máy chủ.";
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -80,20 +51,15 @@ const useAccess = () => {
       setIsLoading(true);
       const response = await postRequest(
         `${baseUrl}/signup`,
-        JSON.stringify(values),
-        apiKey
+        JSON.stringify(values)
       );
-      if (response)
-        if (response?.code == "201") {
-          const { user, tokens } = response.metadata;
-          login(tokens, user);
-        } else {
-          return response.message;
-        }
-      else return "Có lỗi xảy ra khi kết nối tới máy chủ.";
-      return null;
+      if (response?.code == "201") {
+        const { user, tokens } = response.metadata;
+        login(tokens, user);
+      }
+      return response;
     } catch (e) {
-      return "Có lỗi xảy ra khi kết nối tới máy chủ.";
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -105,20 +71,54 @@ const useAccess = () => {
       const response = await postRequest(
         `${baseUrl}/logout`,
         null,
-        apiKey,
         accessToken,
         userData._id
       );
-      if (response)
-        if (response?.code == "200") {
-          logout();
-          return response.message;
-        } else {
-          return response.message;
-        }
-      else return "Có lỗi xảy ra khi kết nối tới máy chủ.";
+      if (response?.code == "200") {
+        logout();
+      }
+      return response;
     } catch (e) {
-      return "Có lỗi xảy ra khi kết nối tới máy chủ.";
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const sendOtp = async (value) => {
+    try {
+      const response = await postRequest(
+        `${baseUrl}/send-otp`,
+        JSON.stringify(value)
+      );
+      return response;
+    } catch (e) {
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const forgotPassword = async (value) => {
+    try {
+      const response = await postRequest(
+        `${baseUrl}/forgot-password`,
+        JSON.stringify(value)
+      );
+      return response;
+    } catch (e) {
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const resetPassword = async (value) => {
+    try {
+      const response = await postRequest(
+        `${baseUrl}/reset-password`,
+        JSON.stringify(value)
+      );
+      return response;
+    } catch (e) {
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -127,10 +127,12 @@ const useAccess = () => {
   return {
     isLoading,
     loginUser,
+    resetPassword,
     signUp,
     logoutUser,
-    loginUserWithGoogle,
-    generatePassword,
+    loginUserWithOAuth,
+    sendOtp,
+    forgotPassword,
   };
 };
 

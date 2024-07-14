@@ -1,7 +1,6 @@
 export const baseUrl = "https://chatrealtime-api.onrender.com/api/v1";
 //http://localhost:8081/api/v1
 //https://chatrealtime-api.onrender.com/api/v1
-export const apiKey = "123456";
 
 import { useAuth } from "../context";
 import useNotify from "../hooks/useNotify";
@@ -9,16 +8,9 @@ import useNotify from "../hooks/useNotify";
 const services = () => {
   const { refreshToken, login, logout } = useAuth();
   const { notifyResult } = useNotify();
-  const postRequest = async (
-    url,
-    body,
-    apiKey,
-    accessToken = null,
-    id = null
-  ) => {
+  const postRequest = async (url, body, accessToken = null, id = null) => {
     const headers = {
       "Content-Type": "application/json",
-      "x-api-key": apiKey,
     };
 
     if (accessToken) {
@@ -38,7 +30,6 @@ const services = () => {
     if (data.code == "401" && data.message == "Verify error with token!") {
       const headersRFToken = {
         "Content-Type": "application/json",
-        "x-api-key": apiKey,
         "x-rfresh-key": refreshToken,
         "x-client-id": id,
       };

@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import { createTheme, MantineProvider, rem } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
+import "@mantine/dates/styles.css";
 import { AuthProvider } from "./context";
 import { Notifications } from "@mantine/notifications";
 const theme = createTheme({

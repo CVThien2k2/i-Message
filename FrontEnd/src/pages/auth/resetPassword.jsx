@@ -10,24 +10,25 @@ import {
   Center,
   Box,
   rem,
+  LoadingOverlay,
 } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import classes from "../../styles/GeneratePassword.module.css";
 import { useForm } from "@mantine/form";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import useAccess from "../../hooks/useAuth";
-import notifyResult from "../../hooks/useNotify";
-
-export function GeneratePassword() {
+import useNotify from "../../hooks/useNotify";
+import { useEffect } from "react";
+export function ResetPassword() {
+  const { notifyResult } = useNotify();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-
-  const { isLoading, generatePassword } = useAccess();
-  console.log(searchParams.get("token"));
+  const { isLoading, resetPassword } = useAccess();
   const form = useForm({
     initialValues: {
       password: "",
       repassword: "",
+      token: "",
     },
     validateInputOnBlur: true,
     validate: {
@@ -41,22 +42,37 @@ export function GeneratePassword() {
         val === values.password ? null : "Mật khẩu không khớp",
     },
   });
-  const handleGenerate = async (event) => {
+  const handleReset = async (event) => {
     event.preventDefault();
-    const errors = form.validate();
-    if (errors.hasErrors) {
-      notifyResult("Đăng nhập", "Vui lòng điền đủ thông tin", false);
+    const isValid = form.validate();
+    if (isValid.hasErrors) {
+      return;
     }
-    const error = await generatePassword({
-      token: searchParams.get("token"),
-      password: form.values.password,
-    });
-    if (error) {
-      notifyResult("Đăng nhập", error, false);
-    } else notifyResult("Đăng nhập", "Đăng nhập thành công", true);
+    const { repassword, ...value } = form.values;
+    const response = await resetPassword(value);
+    if (response) {
+      if (response.code == "200") {
+        notifyResult("Đặt lại mật khẩu", response.message, true);
+        navigate("/login");
+      } else notifyResult("Đặt lại mật khẩu", response.message, false);
+    } else notifyResult("ERROR SERVER", null, false);
   };
+  useEffect(() => {
+    const setParams = async () => {
+      const token = searchParams.get("token");
+      if (token) {
+        form.setValues({
+          token,
+        });
+      } else {
+        navigate("/login");
+      }
+    };
+
+    setParams();
+  }, [searchParams, navigate]);
   return (
-    <form onSubmit={handleGenerate}>
+    <form onSubmit={handleReset}>
       <Container size={460} my={30}>
         <Title
           ta="center"
@@ -65,23 +81,28 @@ export function GeneratePassword() {
             fontWeight: 900,
           }}
         >
-          Hãy hoàn tất đăng ký để đăng nhập.
+          Đặt lại mật khẩu.
         </Title>
         <Text c="dimmed" fz="sm" ta="center">
-          Tạo mật khẩu để hoàn tất đăng ký.
+          Đặt lại mật khẩu của bạn.
         </Text>
 
-        <Paper withBorder shadow="md" p={30} radius="md" mt="xl">
+        <Paper withBorder shadow="md" p={30} radius="md" mt="xl" pos="relative">
+          <LoadingOverlay
+            visible={isLoading}
+            zIndex={1000}
+            overlayProps={{ radius: "sm", blur: 2 }}
+          />
           <PasswordInput
             label="Mật khẩu"
-            placeholder="Nhập mật khẩu"
+            placeholder="Nhập mật khẩu mới"
             required
             mt="md"
             {...form.getInputProps("password")}
           />
           <PasswordInput
             label="Nhập lại mật khẩu"
-            placeholder="Nhập lại mật khẩu"
+            placeholder="Nhập lại mật khẩu mới"
             required
             mt="md"
             {...form.getInputProps("repassword")}

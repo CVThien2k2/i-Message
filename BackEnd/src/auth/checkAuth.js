@@ -1,8 +1,6 @@
-const apikeyService = require("../services/apikey.service");
 const { BadRequestError } = require("../utils/error.response");
 
 const HEADER = {
-  API_KEY: "x-api-key",
   AUTHORIZATION: "authorization",
 };
 const apiKey = async (req, res, next) => {
