@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Title,
   PinInput,
@@ -11,6 +11,7 @@ import {
   Group,
   Box,
   Anchor,
+  Text,
 } from "@mantine/core";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import useAccess from "../../hooks/useAuth";
@@ -22,7 +23,10 @@ import useNotify from "../../hooks/useNotify";
 const VerifyOtp = () => {
   const { notifyResult } = useNotify();
   const navigate = useNavigate();
-  const { isLoading, signUp, forgotPassword } = useAccess();
+  const [disabled, setDisable] = useState(true);
+  const [timer, setTimer] = useState(60);
+  const { isLoading, signUp, forgotPassword, resendOTP } = useAccess();
+  const [searchParams] = useSearchParams();
   const form = useForm({
     initialValues: {
       token: "",
@@ -34,7 +38,32 @@ const VerifyOtp = () => {
       otp: (val) => (val.length < 6 ? "Nhập đủ mã xác thực" : null),
     },
   });
-  const [searchParams] = useSearchParams();
+  const handleResendOtp = async (e) => {
+    e.preventDefault();
+    if (disabled) return;
+    const response = await resendOTP({ token: form.values.token });
+    if (response) {
+      setDisable(true);
+      setTimer(60);
+      if (response.code == "200") {
+        notifyResult("Gửi lại mã OTP thành công", "Vui lòng nhập mã OTP", true);
+      } else {
+        notifyResult("Có lỗi xảy ra", response.message, false);
+        navigate("/forgot-password");
+      }
+    }
+  };
+  React.useEffect(() => {
+    let interval = setInterval(() => {
+      setTimer((lastTimerCount) => {
+        lastTimerCount <= 1 && clearInterval(interval);
+        if (lastTimerCount <= 1) setDisable(false);
+        if (lastTimerCount <= 0) return lastTimerCount;
+        return lastTimerCount - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [disabled]);
   const handleVerify = async (e) => {
     e.preventDefault();
     const isValid = form.validate();
@@ -110,30 +139,30 @@ const VerifyOtp = () => {
             {...form.getInputProps("otp")}
             oneTimeCode
           />
-          <Group justify="space-between" mt="lg">
+          <Button
+            disabled={!(form.isDirty() && form.isValid())}
+            type="submit"
+            fullWidth
+            mt="xl"
+            rightSection={<IconArrowRight style={{ width: rem(18) }} />}
+          >
+            Xác thực
+          </Button>
+          <Text c="dimmed" size="sm" ta="center" mt={15}>
+            Bạn không nhận được mã?
             <Anchor
-              c="dimmed"
               size="sm"
+              ml={5}
               onClick={(e) => {
-                e.preventDefault();
-                navigate("/login");
+                handleResendOtp(e);
               }}
+              underline={disabled ? "never" : "hover"}
             >
-              <Center inline>
-                <IconArrowLeft
-                  style={{ width: rem(12), height: rem(12) }}
-                  stroke={1.5}
-                />
-                <Box ml={5}>Back to the login page</Box>
-              </Center>
+              {disabled
+                ? `Gửi lại mã OTP sau ${timer} giây.`
+                : `Gửi lại mã OTP`}
             </Anchor>
-            <Button
-              type="submit"
-              rightSection={<IconArrowRight style={{ width: rem(18) }} />}
-            >
-              Xác thực
-            </Button>
-          </Group>
+          </Text>
         </Paper>
       </Container>
     </form>

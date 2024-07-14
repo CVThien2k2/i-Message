@@ -28,17 +28,17 @@ const Login = () => {
   const { isLoading, loginUser, loginUserWithOAuth } = useAccess();
 
   useEffect(() => {
-    const handleGoogleLogin = async () => {
+    const handleLogin = async () => {
       if (searchParams.get("token")) {
         const response = await loginUserWithOAuth({
           token: searchParams.get("token"),
         });
         if (response)
           if (response.code == 200) {
-            notifyResult("Đăng nhập", responses.message, true);
+            notifyResult("Đăng nhập", response.message, true);
             navigate("/dashboard");
           } else {
-            notifyResult("Đăng nhập", responses.message, false);
+            notifyResult("Đăng nhập", response.message, false);
             navigate("/login");
           }
         else navigate("/login");
@@ -47,7 +47,7 @@ const Login = () => {
       }
     };
 
-    handleGoogleLogin();
+    handleLogin();
   }, [searchParams, navigate]);
 
   const form = useForm({
@@ -60,7 +60,8 @@ const Login = () => {
       user_name: (val) =>
         val === 0
           ? "Trường này là bắt buộc."
-          : /^\S+@\S+$/.test(val) || /^[0-9]+$/.test(val)
+          : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ||
+            /^(?:\+84|84|0[3-9])\d{8,9}$/.test(val)
           ? null
           : "Email hoặc số điện thoại không đúng định dạng",
       password: (val) =>
@@ -73,17 +74,20 @@ const Login = () => {
   });
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    const errors = form.validate();
-    if (errors.hasErrors) {
-      notifyResult("Đăng nhập", "Vui lòng điền đúng định dạng", false);
-    }
-    const response = await loginUser(form.values);
+    let user_name = form.values.user_name;
+    if (/^(?:\+84|84|0[3-9])\d{8,9}$/.test(user_name))
+      if (user_name.startsWith("+")) {
+        user_name = user_name.substring(1);
+      } else if (user_name.startsWith("0")) {
+        user_name = user_name.substring(1);
+        user_name = `84${user_name}`;
+      }
+    const response = await loginUser({ ...form.values, user_name: user_name });
     if (response) {
       if (response.code == "200")
         notifyResult("Đăng nhập", response.message, true);
       else notifyResult("Đăng nhập", response.message, false);
-    } else notifyResult("Server Error", null, true);
+    } else notifyResult("Server Error", null, false);
   };
   return (
     <>
@@ -155,7 +159,12 @@ const Login = () => {
                 Quên mật khẩu?
               </Anchor>
             </Group>
-            <Button type="submit" fullWidth mt="xl" loading={isLoading}>
+            <Button
+              type="submit"
+              fullWidth
+              mt="xl"
+              disabled={!(form.isDirty() && form.isValid())}
+            >
               Đăng nhập
             </Button>
           </Paper>

@@ -33,7 +33,7 @@ export function NotFound() {
           variant="subtle"
           size="md"
           onClick={() => {
-            navigate("/login");
+            navigate("/signup");
           }}
         >
           {mode == "not-found-account"
@@ -48,7 +48,7 @@ export function NotFound() {
             variant="subtle"
             size="md"
             onClick={() => {
-              navigate("/signup");
+              navigate("/login");
             }}
           >
             Trở về trang đăng nhập

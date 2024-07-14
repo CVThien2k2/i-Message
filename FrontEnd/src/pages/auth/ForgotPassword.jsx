@@ -9,6 +9,7 @@ import {
   Center,
   rem,
   LoadingOverlay,
+  Anchor,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowLeft } from "@tabler/icons-react";
@@ -30,18 +31,23 @@ export function ForgotPassword() {
       user_name: (val) =>
         val === 0
           ? "Trường này là bắt buộc."
-          : /^\S+@\S+$/.test(val) || /^[0-9]+$/.test(val)
+          : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ||
+            /^(?:\+84|84|0[3-9])\d{8,9}$/.test(val)
           ? null
           : "Email hoặc số điện thoại không đúng định dạng",
     },
   });
   const handleForgotPassword = async (e) => {
     e.preventDefault();
-    const isValid = form.validate();
-    if (isValid.hasErrors) {
-      return;
-    }
-    const response = await sendOtp(form.values);
+    let user_name = form.values.user_name;
+    if (/^(?:\+84|84|0[3-9])\d{8,9}$/.test(user_name))
+      if (user_name.startsWith("+")) {
+        user_name = user_name.substring(1);
+      } else if (user_name.startsWith("0")) {
+        user_name = user_name.substring(1);
+        user_name = `84${user_name}`;
+      }
+    const response = await sendOtp({ ...form.values, user_name: user_name });
     if (response)
       if (response.code == "200") {
         notifyResult("Quên mật khẩu", response.message, true);
@@ -53,7 +59,7 @@ export function ForgotPassword() {
   };
   return (
     <form onSubmit={handleForgotPassword}>
-      <Container size={600} my={30}>
+      <Container size={400} my={30}>
         <Title className={classes.title} ta="center" m={30}>
           Quên mật khẩu?
         </Title>
@@ -93,11 +99,15 @@ export function ForgotPassword() {
                 style={{ width: rem(12), height: rem(12) }}
                 stroke={1.5}
               />
-              <Text ml={5} fz="sm">
+              <Anchor ml={5} fz="sm" underline="hover">
                 Trở lại trang đăng nhập
-              </Text>
+              </Anchor>
             </Center>
-            <Button className={classes.control} type="submit">
+            <Button
+              className={classes.control}
+              type="submit"
+              disabled={!(form.isDirty() && form.isValid())}
+            >
               Gửi
             </Button>
           </Group>

@@ -11,6 +11,7 @@ import {
   Select,
   Divider,
   PasswordInput,
+  rem,
   LoadingOverlay,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
@@ -41,7 +42,8 @@ const Register = () => {
       user_name: (val) =>
         val === 0
           ? "Trường này là bắt buộc."
-          : /^\S+@\S+$/.test(val) || /^[0-9]+$/.test(val)
+          : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ||
+            /^(?:\+84|84|0[3-9])\d{8,9}$/.test(val)
           ? null
           : "Email hoặc số điện thoại không đúng định dạng",
       password: (val) => (val.length <= 6 ? "Mật khẩu quá yếu" : null),
@@ -56,13 +58,17 @@ const Register = () => {
   });
   const handleSignUp = async (e) => {
     e.preventDefault();
-    const isValid = form.validate();
-    if (isValid.hasErrors) {
-      return;
-    }
     const { repassword, ...value } = form.values;
     value.doB = new Date(value.doB).getTime();
-    const response = await sendOtp(value);
+    let user_name = form.values.user_name;
+    if (/^(?:\+84|84|0[3-9])\d{8,9}$/.test(user_name))
+      if (user_name.startsWith("+")) {
+        user_name = user_name.substring(1);
+      } else if (user_name.startsWith("0")) {
+        user_name = user_name.substring(1);
+        user_name = `84${user_name}`;
+      }
+    const response = await sendOtp({ ...value, user_name: user_name });
     if (response)
       if (response.code == "200") {
         notifyResult("Đăng ký", response.message, true);
@@ -96,94 +102,99 @@ const Register = () => {
               zIndex={1000}
               overlayProps={{ radius: "sm", blur: 2 }}
             />
-            <>
-              <Text c="dimmed" size="sm" ta="center">
-                Đăng ký tài khoản với
-              </Text>
-              <Group grow mb="md" mt="md">
-                <GoogleButton
-                  radius="xl"
-                  onClick={() => {
-                    window.location.href = `${baseUrl}/signup/google`;
-                  }}
-                >
-                  Google
-                </GoogleButton>
-                <FacebookButton
-                  radius="xl"
-                  onClick={() => {
-                    window.location.href = `${baseUrl}/signup/facebook`;
-                  }}
-                >
-                  Facebook
-                </FacebookButton>
-              </Group>
-              <Divider
-                label="hoặc tiếp tục với email hoặc số điện thoại"
-                labelPosition="center"
-                my="lg"
+
+            <Text c="dimmed" size="sm" ta="center">
+              Đăng ký tài khoản với
+            </Text>
+            <Group grow mb="md" mt="md">
+              <GoogleButton
+                radius="xl"
+                onClick={() => {
+                  window.location.href = `${baseUrl}/signup/google`;
+                }}
+              >
+                Google
+              </GoogleButton>
+              <FacebookButton
+                radius="xl"
+                onClick={() => {
+                  window.location.href = `${baseUrl}/signup/facebook`;
+                }}
+              >
+                Facebook
+              </FacebookButton>
+            </Group>
+            <Divider
+              label="hoặc tiếp tục với email hoặc số điện thoại"
+              labelPosition="center"
+              my="lg"
+            />
+            <TextInput
+              label="Số điện thoại hoặc email"
+              placeholder="Số điện thoại hoặc email của bạn"
+              required
+              {...form.getInputProps("user_name")}
+            />
+            <Group display={"flex"}>
+              <TextInput
+                flex={1}
+                label="Họ"
+                placeholder="Họ"
+                required
+                {...form.getInputProps("family_name")}
               />
               <TextInput
-                label="Số điện thoại hoặc email"
-                placeholder="Số điện thoại hoặc email của bạn"
+                flex={1}
+                label="Tên"
+                placeholder="Tên"
                 required
-                {...form.getInputProps("user_name")}
+                {...form.getInputProps("given_name")}
               />
-              <Group display={"flex"}>
-                <TextInput
-                  flex={1}
-                  label="Họ"
-                  placeholder="Họ"
-                  required
-                  {...form.getInputProps("family_name")}
-                />
-                <TextInput
-                  flex={1}
-                  label="Tên"
-                  placeholder="Tên"
-                  required
-                  {...form.getInputProps("given_name")}
-                />
-              </Group>
-              <Group display={"flex"}>
-                <Select
-                  flex={1}
-                  required
-                  label="Giới tính"
-                  placeholder="Giới tính"
-                  data={[
-                    { value: "male", label: "Nam" },
-                    { value: "female", label: "Nữ" },
-                    { value: "other", label: "Khác" },
-                  ]}
-                  {...form.getInputProps("gender")}
-                />
-                <DateInput
-                  clearable
-                  placeholder="Ngày sinh của bạn"
-                  flex={1}
-                  defaultValue={new Date()}
-                  valueFormat="DD/MM/YYYY"
-                  label="Ngày sinh"
-                  {...form.getInputProps("doB")}
-                />
-              </Group>
-              <PasswordInput
-                label="Mật khẩu"
-                placeholder="Nhập mật khẩu"
+            </Group>
+            <Group display={"flex"}>
+              <Select
+                flex={1}
                 required
-                mt="md"
-                {...form.getInputProps("password")}
+                label="Giới tính"
+                placeholder="Giới tính"
+                data={[
+                  { value: "male", label: "Nam" },
+                  { value: "female", label: "Nữ" },
+                  { value: "other", label: "Khác" },
+                ]}
+                {...form.getInputProps("gender")}
               />
-              <PasswordInput
-                label="Nhập lại mật khẩu"
-                placeholder="Nhập mật khẩu"
-                required
-                mt="md"
-                {...form.getInputProps("repassword")}
+              <DateInput
+                clearable
+                placeholder="Ngày sinh của bạn"
+                flex={1}
+                defaultValue={new Date()}
+                valueFormat="DD/MM/YYYY"
+                label="Ngày sinh"
+                {...form.getInputProps("doB")}
               />
-            </>
-            <Button type="submit" fullWidth mt="xl">
+            </Group>
+            <PasswordInput
+              label="Mật khẩu"
+              placeholder="Nhập mật khẩu"
+              required
+              mt="md"
+              {...form.getInputProps("password")}
+            />
+            <PasswordInput
+              label="Nhập lại mật khẩu"
+              placeholder="Nhập mật khẩu"
+              required
+              mt="md"
+              {...form.getInputProps("repassword")}
+            />
+
+            <Button
+              type="submit"
+              fullWidth
+              mt="xl"
+              disabled={!(form.isDirty() && form.isValid())}
+            >
               Đăng ký
             </Button>
             <Text c="dimmed" size="sm" ta="center" mt={15}>

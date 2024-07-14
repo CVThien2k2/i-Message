@@ -145,6 +145,13 @@ class accessController {
       metadata: { token: token },
     }).send(res);
   }
+  async reSendOtp(req, res, next) {
+    const token = await accessService.reSendOtp(req.body.token);
+    new SuccessResponse({
+      message: "OTP has been resent!",
+      metadata: { token: token },
+    }).send(res);
+  }
 }
 
 module.exports = new accessController();

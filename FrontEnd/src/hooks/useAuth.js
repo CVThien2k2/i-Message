@@ -126,9 +126,22 @@ const useAccess = () => {
       setIsLoading(false);
     }
   };
+  const resendOTP = async (value) => {
+    try {
+      const response = await postRequest(
+        `${baseUrl}/resend-otp`,
+        JSON.stringify(value)
+      );
+      return response;
+    } catch (e) {
+      return null;
+    } finally {
+    }
+  };
 
   return {
     isLoading,
+    resendOTP,
     loginUser,
     resetPassword,
     signUp,

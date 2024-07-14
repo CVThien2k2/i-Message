@@ -85,7 +85,7 @@ class accessService {
   }) => {
     if (
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user_name) &&
-      !/^(?:\+84|0[3-9])\d{8,9}$/.test(user_name)
+      !/^(?:\+84|84|0[3-9])\d{8,9}$/.test(user_name)
     ) {
       throw new BadRequestError("Invalid email or phone number.");
     }
@@ -272,7 +272,7 @@ class accessService {
     const user_name = data.user_name;
     if (
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user_name) &&
-      !/^(?:\+84|0[3-9])\d{8,9}$/.test(user_name)
+      !/^(?:\+84|84|0[3-9])\d{8,9}$/.test(user_name)
     ) {
       throw new BadRequestError("Invalid email or phone number.");
     }
@@ -304,7 +304,32 @@ class accessService {
       if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user_name)) {
         sendEmail(user_name, otp);
       } else {
-        sendSMS(user_name, otp);
+        sendSMS(`+${user_name}`, otp);
+      }
+    } else {
+      throw new BadRequestError("Server Error!");
+    }
+    return token;
+  };
+  reSendOtp = async (token) => {
+    const data = await JWT.verify(token, process.env.PRIVATE_KEY_OTP, {
+      expiresIn: "5m",
+    });
+    const otp = OtpGenerator.generate(6, {
+      digits: true,
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
+    const newOtp = await otpService.createOtp({
+      user_name: data.user_name,
+      otp: otp,
+    });
+    if (newOtp) {
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.user_name)) {
+        sendEmail(data.user_name, otp);
+      } else {
+        sendSMS(`+${data.user_name}`, otp);
       }
     } else {
       throw new BadRequestError("Server Error!");

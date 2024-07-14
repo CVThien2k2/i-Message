@@ -7,7 +7,7 @@ import { useAuth } from "./context";
 import { NotFound } from "./pages/auth/NotFound";
 import { ForgotPassword } from "./pages/auth/ForgotPassword";
 import VerifyOtp from "./pages/auth/VerifyOtp";
-import { ResetPassword } from "./pages/auth/resetPassword";
+import { ResetPassword } from "./pages/auth/ResetPassword";
 function App() {
   const { isAuthenticated } = useAuth();
   return (

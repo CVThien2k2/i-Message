@@ -12,7 +12,6 @@ import {
   rem,
   LoadingOverlay,
 } from "@mantine/core";
-import { IconArrowLeft } from "@tabler/icons-react";
 import classes from "../../styles/GeneratePassword.module.css";
 import { useForm } from "@mantine/form";
 import { useSearchParams, useNavigate } from "react-router-dom";
@@ -107,22 +106,14 @@ export function ResetPassword() {
             mt="md"
             {...form.getInputProps("repassword")}
           />
-          <Group justify="space-between" mt="lg" className={classes.controls}>
-            <Anchor c="dimmed" size="sm" className={classes.control}>
-              <Center inline>
-                <IconArrowLeft
-                  style={{ width: rem(12), height: rem(12) }}
-                  stroke={1.5}
-                />
-                <Box ml={5} onClick={() => navigate("/login")}>
-                  Trở về trang đăng nhập
-                </Box>
-              </Center>
-            </Anchor>
-            <Button className={classes.control} type="submit">
-              Gửi
-            </Button>
-          </Group>
+          <Button
+            type="submit"
+            disabled={!(form.isDirty() && form.isValid())}
+            fullWidth
+            mt="xl"
+          >
+            Gửi
+          </Button>
         </Paper>
       </Container>
     </form>

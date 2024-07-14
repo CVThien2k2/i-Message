@@ -17,6 +17,7 @@ router.post(
 router.post("/reset-password", asyncHandler(accessController.resetPassword));
 //Login with app
 router.post("/send-otp", asyncHandler(accessController.sendOtp));
+router.post("/resend-otp", asyncHandler(accessController.reSendOtp));
 router.post("/signup", verifyOtp, asyncHandler(accessController.signUp));
 router.post("/login", asyncHandler(accessController.login));
 //Login & register with google
