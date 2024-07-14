@@ -4,7 +4,7 @@
 // src/config.js
 const isProduction = window.location.hostname !== "localhost";
 export const baseUrl = isProduction
-  ? "https://chatrealtime-api.onrender.com/api/v1"
+  ? "https://imessage-api.vercel.app/api/v1"
   : "http://localhost:8081/api/v1";
 
 import { useAuth } from "../context";
