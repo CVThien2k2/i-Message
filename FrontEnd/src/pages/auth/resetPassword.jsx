@@ -5,11 +5,6 @@ import {
   PasswordInput,
   Button,
   Container,
-  Group,
-  Anchor,
-  Center,
-  Box,
-  rem,
   LoadingOverlay,
 } from "@mantine/core";
 import classes from "../../styles/GeneratePassword.module.css";
