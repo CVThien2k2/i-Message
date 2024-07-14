@@ -1,6 +1,11 @@
-export const baseUrl = "https://chatrealtime-api.onrender.com/api/v1";
+//export const baseUrl = "https://chatrealtime-api.onrender.com/api/v1";
 //http://localhost:8081/api/v1
 //https://chatrealtime-api.onrender.com/api/v1
+// src/config.js
+const isProduction = window.location.hostname !== "localhost";
+export const baseUrl = isProduction
+  ? "https://chatrealtime-api.onrender.com/api/v1"
+  : "http://localhost:8081/api/v1";
 
 import { useAuth } from "../context";
 import useNotify from "../hooks/useNotify";
