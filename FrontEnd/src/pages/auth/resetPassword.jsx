@@ -12,7 +12,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import useAccess from "../../hooks/useAuth";
 import useNotify from "../../hooks/useNotify";
 import { useEffect } from "react";
-export function ResetPassword() {
+const ResetPassword = () => {
   const { notifyResult } = useNotify();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -112,4 +112,5 @@ export function ResetPassword() {
       </Container>
     </form>
   );
-}
+};
+export default ResetPassword;
