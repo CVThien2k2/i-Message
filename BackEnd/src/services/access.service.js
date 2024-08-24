@@ -1,21 +1,22 @@
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
+const JWT = require("jsonwebtoken");
+const OtpGenerator = require("otp-generator");
 const {
   userModel,
   oAuthAcountModel,
   registerAcountModel,
 } = require("../models/user.model");
-const bcrypt = require("bcrypt");
-const crypto = require("crypto");
-const JWT = require("jsonwebtoken");
 const keyTokenService = require("./keyToken.service");
 const { createTokenPair, hashString } = require("../auth/authUtils");
 const { getInfoData } = require("../utils");
-const { verifyJWT } = require("../auth/authUtils");
-const transporter = require("../utils/mailer");
-const OtpGenerator = require("otp-generator");
 const {
-  BadRequestError,
+  ForbiddenError,
   AuthFailureError,
   ConflictRequestError,
+  InternalServerError,
+  BadRequestError,
+  NotFoundError,
 } = require("../utils/error.response");
 const userService = require("./user.service");
 const otpService = require("./otp.service");
@@ -35,7 +36,7 @@ class accessService {
       password,
       foundAccount.password
     );
-    if (!isValidPassword) throw new AuthFailureError("Authentication error");
+    if (!isValidPassword) throw new AuthFailureError("Invalid password!");
     const privateKey = crypto.randomBytes(64).toString("hex");
     const publicKey = crypto.randomBytes(64).toString("hex");
 
@@ -44,13 +45,15 @@ class accessService {
       privateKey,
       publicKey
     );
-    await keyTokenService.createKeyToken({
+    const keyStore = await keyTokenService.createKeyToken({
       publicKey,
       privateKey,
       userId: foundAccount.user._id,
       refreshToken: tokens.refreshToken,
     });
-
+    if (!keyStore) {
+      throw new InternalServerError("Error creating keypair");
+    }
     return {
       user: getInfoData({
         fields: [
@@ -69,6 +72,7 @@ class accessService {
       tokens,
     };
   };
+
   signUp = async ({
     user_name,
     password,
@@ -87,7 +91,7 @@ class accessService {
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user_name) &&
       !/^(?:\+84|84|0[3-9])\d{8,9}$/.test(user_name)
     ) {
-      throw new BadRequestError("Invalid email or phone number.");
+      throw new BadRequestError("Invalid email or phone number");
     }
     if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user_name)) email = user_name;
     else number_phone = user_name;
@@ -96,7 +100,7 @@ class accessService {
       .populate("user")
       .lean();
     if (user) {
-      throw new BadRequestError("Email or phone number already in use.");
+      throw new ConflictRequestError("Email or phone number already in use");
     }
     password = await hashString(password);
     const newUser = await userModel.create({
@@ -112,7 +116,7 @@ class accessService {
       active: active,
     });
     if (!newUser) {
-      throw new Error("Error creating user");
+      throw new InternalServerError("Error creating user");
     }
     const account = await registerAcountModel.create({
       user_name: user_name,
@@ -121,7 +125,7 @@ class accessService {
     });
     if (!account) {
       await newUser.deleteOne();
-      throw new Error("Error creating register account");
+      throw new InternalServerError("Error creating register account");
     }
 
     //Tạo khóa
@@ -139,7 +143,7 @@ class accessService {
       refreshToken: tokens.refreshToken,
     });
     if (!keyStore) {
-      throw new BadRequestError("keyStore error");
+      throw new InternalServerError("Error creating keypair");
     }
     return {
       user: getInfoData({
@@ -159,22 +163,24 @@ class accessService {
       tokens,
     };
   };
+
   logout = async ({ keyStore }) => {
     const delKey = await keyTokenService.removeKeyById(keyStore._id);
     return delKey;
   };
+
   handlerRefreshToken = async ({ refreshToken, user, keyStore }) => {
     const { userId, user_name } = user;
     if (keyStore.refreshTokenUsed.includes(refreshToken)) {
       await keyTokenService.deleteKeyById(userId);
-      throw new BadRequestError("Something wrong happen! Please relogin");
+      throw new ForbiddenError("Something wrong happen! Please relogin");
     }
     if (keyStore.refreshToken !== refreshToken) {
       throw new AuthFailureError("Invalid refresh token");
     }
     const foundAccount = await userService.findAccountByUserName(user_name);
     if (!foundAccount) {
-      throw new AuthFailureError("User not registered");
+      throw new ForbiddenError("User not registered");
     }
     const tokens = await createTokenPair(
       { userId, user_name },
@@ -207,12 +213,14 @@ class accessService {
       tokens,
     };
   };
+
   getOAuthAccountByProvider = async (provider_id) => {
     return await oAuthAcountModel
       .findOne({ provider_id: provider_id })
       .populate("user")
       .lean();
   };
+
   loginWithOAuth = async (account) => {
     const privateKey = crypto.randomBytes(64).toString("hex");
     const publicKey = crypto.randomBytes(64).toString("hex");
@@ -221,12 +229,16 @@ class accessService {
       privateKey,
       publicKey
     );
-    await keyTokenService.createKeyToken({
+    const keyStore = await keyTokenService.createKeyToken({
       publicKey,
       privateKey,
       userId: account.user._id,
       refreshToken: tokens.refreshToken,
     });
+
+    if (!keyStore) {
+      throw new InternalServerError("Error creating keypair");
+    }
     return {
       user: getInfoData({
         fields: [
@@ -245,6 +257,7 @@ class accessService {
       tokens,
     };
   };
+
   signupWithOAuth = async (profile) => {
     const newUser = await userModel.create({
       email: profile.emails[0].value,
@@ -259,7 +272,7 @@ class accessService {
       active: "true",
     });
     if (!newUser) {
-      throw new Error("Error creating user");
+      throw new InternalServerError("Error creating user");
     }
     const account = await oAuthAcountModel.create({
       type: profile.provider,
@@ -268,24 +281,25 @@ class accessService {
     });
     return account;
   };
+
   sendOtp = async (data) => {
     const user_name = data.user_name;
     if (
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user_name) &&
       !/^(?:\+84|84|0[3-9])\d{8,9}$/.test(user_name)
     ) {
-      throw new BadRequestError("Invalid email or phone number.");
+      throw new BadRequestError("Invalid email or phone number");
     }
     const account = await registerAcountModel
       .findOne({ user_name: user_name })
       .populate("user")
       .lean();
     if (data.type == "signup") {
-      if (account) throw new ConflictRequestError("User name is use!");
+      if (account) throw new ConflictRequestError("User name is use");
     } else if (data.type == "forgot-password") {
-      if (!account) throw new BadRequestError("User name not found!");
+      if (!account) throw new NotFoundError("User name not found");
     } else {
-      throw new BadRequestError("Type not found!");
+      throw new BadRequestError("Type not found");
     }
     const otp = OtpGenerator.generate(6, {
       digits: true,
@@ -293,6 +307,7 @@ class accessService {
       upperCaseAlphabets: false,
       specialChars: false,
     });
+
     const newOtp = await otpService.createOtp({
       user_name: user_name,
       otp: otp,
