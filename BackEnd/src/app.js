@@ -21,7 +21,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:8081/api/v1"
+        url: {`${process.env.CALL_BACK_ULR}/api/v1`}
       },
     ],
     components: {
