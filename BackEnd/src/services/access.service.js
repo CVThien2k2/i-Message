@@ -23,6 +23,7 @@ const otpService = require("./otp.service");
 const sendEmail = require("../utils/mailer");
 const sendSMS = require("../utils/sms");
 
+
 class accessService {
   login = async ({ user_name, password }) => {
     const foundAccount = await registerAcountModel
@@ -30,13 +31,13 @@ class accessService {
       .populate("user")
       .lean();
     if (!foundAccount) {
-      throw new BadRequestError("User name not registered!");
+      throw new BadRequestError("User name not registered");
     }
     const isValidPassword = await bcrypt.compare(
       password,
       foundAccount.password
     );
-    if (!isValidPassword) throw new AuthFailureError("Invalid password!");
+    if (!isValidPassword) throw new AuthFailureError("Invalid password");
     const privateKey = crypto.randomBytes(64).toString("hex");
     const publicKey = crypto.randomBytes(64).toString("hex");
 
@@ -52,7 +53,7 @@ class accessService {
       refreshToken: tokens.refreshToken,
     });
     if (!keyStore) {
-      throw new InternalServerError("Error creating keypair");
+      throw new InternalServerError("Internal server error");
     }
     return {
       user: getInfoData({
@@ -296,10 +297,10 @@ class accessService {
       .lean();
     if (data.type == "signup") {
       if (account) throw new ConflictRequestError("User name is use");
-    } else if (data.type == "forgot-password") {
+    } else if (data.type === "forgot-password") {
       if (!account) throw new NotFoundError("User name not found");
     } else {
-      throw new BadRequestError("Type not found");
+      throw new BadRequestError("Request not found");
     }
     const otp = OtpGenerator.generate(6, {
       digits: true,
@@ -322,10 +323,11 @@ class accessService {
         sendSMS(`+${user_name}`, otp);
       }
     } else {
-      throw new BadRequestError("Server Error!");
+      throw new InternalServerError("Internal server error");
     }
     return token;
   };
+
   reSendOtp = async (token) => {
     const data = await JWT.verify(token, process.env.PRIVATE_KEY_OTP, {
       expiresIn: "5m",
@@ -336,6 +338,7 @@ class accessService {
       upperCaseAlphabets: false,
       specialChars: false,
     });
+    await otpService.deleteMany({ user_name: data.user_name });
     const newOtp = await otpService.createOtp({
       user_name: data.user_name,
       otp: otp,
@@ -347,10 +350,11 @@ class accessService {
         sendSMS(`+${data.user_name}`, otp);
       }
     } else {
-      throw new BadRequestError("Server Error!");
+      throw new InternalServerError("Internal server error");
     }
     return token;
   };
+
   resetPassword = async (user_name, password) => {
     const hashedPassword = await hashString(password);
     const account = registerAcountModel.updateOne(
@@ -358,6 +362,29 @@ class accessService {
       { $set: { password: hashedPassword } }
     );
     return account;
+    // if (account) {
+    //   const updatedUser = await registerAcountModel
+    //   .findOne({ user_name: user_name })
+    //   .populate("user")
+    //   .lean();
+    //   console.log(updatedUser);
+    //   return {
+    //     user: getInfoData({
+    //       fields: [
+    //         "_id",
+    //         "email",
+    //         "given_name",
+    //         "family_name",
+    //         "number_phone",
+    //         "gender",
+    //         "address",
+    //         "avatar",
+    //         "doB",
+    //       ],
+    //       object: updatedUser.user,
+    //     })
+    //   }
+    // } else throw new InternalServerError("Internal server error");
   };
 }
 

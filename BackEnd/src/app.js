@@ -12,18 +12,43 @@ const swaggerUi = require("swagger-ui-express");
 // Cấu hình Swagger
 const swaggerOptions = {
   definition: {
-    openapi: "3.1.0",
+    openapi: "3.0.3",
     info: {
-      title: "My App API",
-      version: "1.0.0",
-      description: "API documentation for my Express app",
+      title: "Tài liệu API cho ứng dụng MXH",
+      version: "1.0.11",
+      description:
+        "API này cung cấp một bộ điểm cuối toàn diện để quản lý ứng dụng trên mạng xã hội. Nó cho phép các nhà phát triển tương tác với danh mục. API cũng hỗ trợ các tính năng như lọc, sắp xếp và phân trang để giúp quản lý dữ liệu hiệu quả.",
     },
     servers: [
       {
-        url: "http://localhost:8081",
-        description: "Local server",
+        url: "http://localhost:8081/api/v1"
       },
     ],
+    components: {
+      schemas: {
+        User: {
+          type: "object",
+          properties: {
+            _id: { type: "string", example: "66c9c19dde0a450a7d15742b" },
+            email: { type: "string", example: "caovanthien9102002@gmail.com" },
+            given_name: { type: "string", example: "Thiện" },
+            family_name: { type: "string", example: "Cao Văn" },
+            number_phone: { type: "string", example: "0123456789" },
+            gender: { type: "string", example: "male" },
+            address: { type: "string", example: "123 Đường ABC, Quận XYZ" },
+            avatar: { type: "string", example: "https://example.com/avatar.jpg" },
+            doB: { type: "string", example: "1990-01-01" }
+          }
+        },
+        Tokens: {
+          type: "object",
+          properties: {
+            accessToken: { type: "string", example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." },
+            refreshToken: { type: "string", example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
+          }
+        }
+      }
+    }
   },
   apis: ["./src/routes/*.js"], // Đường dẫn tới các file route để Swagger quét và tạo tài liệu
 };

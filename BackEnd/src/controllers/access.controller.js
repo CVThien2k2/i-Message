@@ -10,16 +10,18 @@ const {
   BadRequestError,
 } = require("../utils/error.response");
 
+
 class accessController {
   async login(req, res, next) {
     new SuccessResponse({
-      message: "Login success!",
+      message: "Login success",
       metadata: await accessService.login(req.body),
     }).send(res);
   }
+
   async signUp(req, res, next) {
     new CREATED({
-      message: "Register OK!",
+      message: "Register OK",
       metadata: await accessService.signUp({
         user_name: req.data.user_name,
         given_name: req.data.given_name,
@@ -34,15 +36,17 @@ class accessController {
       }),
     }).send(res);
   }
+
   async logout(req, res, next) {
     new SuccessResponse({
-      message: "Logout success!",
+      message: "Logout success",
       metadata: await accessService.logout({ keyStore: req.keyStore }),
     }).send(res);
   }
+
   async handlerRefreshToken(req, res, next) {
     new SuccessResponse({
-      message: "Get token success!",
+      message: "Get token success",
       metadata: await accessService.handlerRefreshToken({
         refreshToken: req.refreshToken,
         user: req.user,
@@ -50,6 +54,7 @@ class accessController {
       }),
     }).send(res);
   }
+
   async authWithOAuth(req, res, next) {
     const state = req.query.state;
     const profile = req.profile;
@@ -96,18 +101,20 @@ class accessController {
       }
     }
   }
+
   async loginWithOAuth(req, res, next) {
     const decoded = verifyJWT(req.body.token, process.env.PRIVATE_KEY_AUTH);
     const { provider_id } = decoded;
     const foundAccount = await accessService.getOAuthAccountByProvider(
       provider_id
     );
-    if (!foundAccount) throw new AuthFailureError("Login failed");
+    if (!foundAccount) throw new NotFoundError("Login failed");
     new SuccessResponse({
-      message: "Login success!",
+      message: "Login success",
       metadata: await accessService.loginWithOAuth(foundAccount),
     }).send(res);
   }
+
   async forgotPassword(req, res, next) {
     const token = await JWT.sign(
       { user_name: req.data.user_name },
@@ -117,10 +124,11 @@ class accessController {
       }
     );
     new SuccessResponse({
-      message: "Verify otp success!",
+      message: "Verify otp success",
       metadata: { token: token },
     }).send(res);
   }
+
   async resetPassword(req, res, next) {
     const { user_name } = await JWT.verify(
       req.body.token,
@@ -134,21 +142,23 @@ class accessController {
       req.body.password
     );
     new SuccessResponse({
-      message: "Reset password success!",
+      message: "Reset password success",
       metadata: account,
     }).send(res);
   }
+
   async sendOtp(req, res, next) {
     const token = await accessService.sendOtp(req.body);
     new SuccessResponse({
-      message: "OTP has been sent!",
+      message: "OTP has been sent",
       metadata: { token: token },
     }).send(res);
   }
+
   async reSendOtp(req, res, next) {
     const token = await accessService.reSendOtp(req.body.token);
     new SuccessResponse({
-      message: "OTP has been resent!",
+      message: "OTP has been resent",
       metadata: { token: token },
     }).send(res);
   }

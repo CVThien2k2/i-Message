@@ -5,16 +5,19 @@ const {
   AuthFailureError,
   NotFoundError,
   BadRequestError,
+  TimeoutError
 } = require("../utils/error.response");
 const { findByUserId } = require("../services/keyToken.service");
 const bcrypt = require("bcrypt");
 const { getLastOtpByUserName } = require("../services/otp.service");
+
 const HEADER = {
   API_KEY: "x-api-key",
   AUTHORIZATION: "authorization",
   CLIENT_ID: "x-client-id",
   REFRESH_TOKEN: "x-rfresh-key",
 };
+
 const createTokenPair = async (payload, privateKey, publicKey) => {
   try {
     //accessToken
@@ -36,6 +39,7 @@ const createTokenPair = async (payload, privateKey, publicKey) => {
     return error;
   }
 };
+
 const authentication = asyncHandler(async (req, res, next) => {
   const userId = req.headers[HEADER.CLIENT_ID];
   if (!userId) throw new AuthFailureError("Invalid Request");
@@ -53,6 +57,7 @@ const authentication = asyncHandler(async (req, res, next) => {
     throw new AuthFailureError("Verify error with token!");
   }
 });
+
 const authenticationRefreshToken = asyncHandler(async (req, res, next) => {
   const userId = req.headers[HEADER.CLIENT_ID];
   if (!userId) throw new AuthFailureError("Invalid userId");
@@ -78,30 +83,43 @@ const authenticationRefreshToken = asyncHandler(async (req, res, next) => {
 const verifyJWT = (token, keySecret) => {
   return JWT.verify(token, keySecret);
 };
+
 const signJWT = (payload, privateKey) => {
   return JWT.sign(payload, privateKey, {
     expiresIn: "1d",
   });
 };
+
 const hashString = async (string) => {
   const salt = await bcrypt.genSalt(10);
   return await bcrypt.hash(string, salt);
 };
+
 const verifyOtp = asyncHandler(async (req, res, next) => {
   const otp = req.body.otp;
-  if (!otp) throw new AuthFailureError("Invalid otp");
+  if (!otp) throw new BadRequestError("Invalid otp");
   const data = await JWT.verify(req.body.token, process.env.PRIVATE_KEY_OTP, {
     expiresIn: "5m",
   });
-  if (!data) throw new BadRequestError("Request time out!");
+  if (!data) throw new TimeoutError("Request time out");
   const otpKey = await getLastOtpByUserName({ user_name: data.user_name });
-  if (!otpKey) throw new AuthFailureError("Otp not found!");
+  if (!otpKey) throw new TimeoutError("OTP has expired");
   const isOtp = await bcrypt.compare(otp, otpKey.otp);
   if (!isOtp) throw new AuthFailureError("Authentication otp error");
   await otpKey.deleteOne({ user_name: data.user_name });
   req.data = data;
   return next();
 });
+
+const addTypeSignup =asyncHandler(async (req, res, next) => {
+  req.body.type = 'signup';
+  next();
+})
+
+const addTypeForgotPassword =asyncHandler(async (req, res, next) => {
+  req.body.type = 'forgot-password';
+  next();
+})
 module.exports = {
   createTokenPair,
   authentication,
@@ -110,4 +128,6 @@ module.exports = {
   hashString,
   signJWT,
   verifyOtp,
+  addTypeSignup,
+  addTypeForgotPassword
 };

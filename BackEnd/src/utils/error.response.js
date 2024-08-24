@@ -15,6 +15,14 @@ class BadRequestError extends ErrorResponse {
     super(message, statusCode);
   }
 }
+class TimeoutError extends ErrorResponse {
+  constructor(
+    message = ReasonPhrases.REQUEST_TIMEOUT,
+    statusCode = StatusCodes.REQUEST_TIMEOUT
+  ) {
+    super(message, statusCode);
+  }
+}
 class ConflictRequestError extends ErrorResponse {
   constructor(
     message = ReasonPhrases.CONFLICT,
@@ -64,4 +72,5 @@ module.exports = {
   ErrorResponse,
   InternalServerError,
   BadRequestError,
+  TimeoutError
 };
