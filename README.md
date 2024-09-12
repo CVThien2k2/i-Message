@@ -20,30 +20,36 @@
 
 ## Công nghệ sử dụng
 
-- **Frontend:** Xây dựng bằng ReactJS, sử dụng thư viện [Socket.io-client] để giao tiếp với server.
+- **Frontend:** Xây dựng bằng ReactJS (VITE), sử dụng Mantine UI, Tailwindcss, sử dụng thư viện [Socket.io-client] để giao tiếp với server.
 
 - **Backend:** Xây dựng bằng Node.js, sử dụng framework [Express](https://expressjs.com/) và thư viện [Socket.io](https://socket.io/) để tạo kết nối realtime.
 
-- **Database:** Sử dụng MongoDB để lưu trữ thông tin người dùng và tin nhắn.
-
+- **Database:** Sử dụng MongoDB để lưu trữ.
+  
 ## Cài đặt và Chạy
 
-1. **Clone Repository:**aa
+1. **Clone Repository:**
    ```bash
    git clone https://github.com/your-username/realtime-chat-app.git
    ```
 2. **Cài đặt thư viện**
    ```bash
-    cd realtime-chat-app
-    npm install
+    cd BackEnd
+    yarn
+    cd FrontEnd
+    yarn
+   
    ```
-3. **Cấu hình Database**
+3. **Cấu hình biến môi trường**
    ```bash
-   Tạo một cơ sở dữ liệu MongoDB và cung cấp URL kết nối trong file và key_Token .env.
+   Clone .env.example -> .env và thêm dữ liệu phù hợp
    ```
 4. **Chạy Ứng dụng**
    ```bash
-   npm run dev
+   cd BackEnd
+   yarn dev
+   cd FrontEnd
+   yarn dev
    ```
 
 ## Tác giả
