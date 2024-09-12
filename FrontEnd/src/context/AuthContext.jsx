@@ -2,7 +2,6 @@ import { createContext, useState, useEffect, useContext } from "react";
 
 export const AuthContext = createContext();
 
-// eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
@@ -18,7 +17,6 @@ export const AuthProvider = ({ children }) => {
       setUserData(user);
       setIsAuthenticated(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const login = (newToken, newData) => {
@@ -54,5 +52,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-// eslint-disable-next-line react-refresh/only-export-components
+
 export const useAuth = () => useContext(AuthContext);

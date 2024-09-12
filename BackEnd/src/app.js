@@ -21,7 +21,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `${process.env.CALL_BACK_ULR}/api/v1`
+        url: `${process.env.CALL_BACK_ULR}/v1`
       },
     ],
     components: {
@@ -53,7 +53,7 @@ const swaggerOptions = {
   apis: ["./src/routes/*.js"], // Đường dẫn tới các file route để Swagger quét và tạo tài liệu
 };
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 //init middlewares
 app.use(morgan("dev"));

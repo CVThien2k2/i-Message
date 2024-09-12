@@ -12,13 +12,12 @@ import {
   Button,
   LoadingOverlay,
 } from "@mantine/core";
-
 import { GoogleButton } from "../../styles/GoogleButton";
 import { FacebookButton } from "../../styles/FacebookButton";
 import useAccess from "../../hooks/useAuth";
 import useNotify from "../../hooks/useNotify";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { baseUrl } from "../../utils/services";
 
 const Login = () => {
@@ -26,29 +25,31 @@ const Login = () => {
   const navigate = useNavigate();
   const { notifyResult } = useNotify();
   const { isLoading, loginUser, loginUserWithOAuth } = useAccess();
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    if (searchParams.get("token")) setToken(searchParams.get("token"));
+  }, [searchParams]);
 
   useEffect(() => {
     const handleLogin = async () => {
-      if (searchParams.get("token")) {
-        const response = await loginUserWithOAuth({
-          token: searchParams.get("token"),
-        });
-        if (response)
-          if (response.code == 200) {
-            notifyResult("Đăng nhập", response.message, true);
-            navigate("/dashboard");
-          } else {
-            notifyResult("Đăng nhập", response.message, false);
-            navigate("/login");
-          }
-        else navigate("/login");
-      } else {
-        navigate("/login");
-      }
-    };
-
-    handleLogin();
-  }, [searchParams, navigate]);
+      const response = await loginUserWithOAuth({
+        token: token,
+      });
+      if (response)
+        if (response.code == 200) {
+          notifyResult("Đăng nhập", response.message, true);
+          navigate("/dashboard");
+        } else {
+          notifyResult("Đăng nhập", response.message, false);
+          navigate("/login");
+        }
+      else navigate("/login");
+    }
+    if (token) {
+      handleLogin();
+    }
+  }, [token])
 
   const form = useForm({
     initialValues: {
@@ -62,16 +63,17 @@ const Login = () => {
           ? "Trường này là bắt buộc."
           : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ||
             /^(?:\+84|84|0[3-9])\d{8,9}$/.test(val)
-          ? null
-          : "Email hoặc số điện thoại không đúng định dạng",
+            ? null
+            : "Email hoặc số điện thoại không đúng định dạng",
       password: (val) =>
         val.length == 0
           ? "Trường này là bắt buộc"
           : val.length < 6
-          ? "Mật khẩu chưa đủ độ dài bắt buộc (6 ký tự)"
-          : null,
+            ? "Mật khẩu chưa đủ độ dài bắt buộc (6 ký tự)"
+            : null,
     },
   });
+
   const handleLogin = async (e) => {
     e.preventDefault();
     let user_name = form.values.user_name;
@@ -87,8 +89,9 @@ const Login = () => {
       if (response.code == "200")
         notifyResult("Đăng nhập", response.message, true);
       else notifyResult("Đăng nhập", response.message, false);
-    } else notifyResult("Server Error", null, false);
+    } else notifyResult("Có lỗi xảy ra khi kết nối tới máy chủ", null, false);
   };
+
   return (
     <>
       <form onSubmit={handleLogin}>
@@ -173,4 +176,5 @@ const Login = () => {
     </>
   );
 };
+
 export default Login;

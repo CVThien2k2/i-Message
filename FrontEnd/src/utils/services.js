@@ -2,17 +2,16 @@
 //http://localhost:8081/api/v1
 //https://chatrealtime-api.onrender.com/api/v1
 // src/config.js
-const isProduction = window.location.hostname !== "localhost";
-export const baseUrl = isProduction
-  ? "https://imessage-api.vercel.app/api/v1"
-  : "http://localhost:8081/api/v1";
+export const baseUrl = "http://localhost:8081/v1";
 
 import { useAuth } from "../context";
 import useNotify from "../hooks/useNotify";
 
 const services = () => {
+
   const { refreshToken, login, logout } = useAuth();
   const { notifyResult } = useNotify();
+
   const postRequest = async (url, body, accessToken = null, id = null) => {
     const headers = {
       "Content-Type": "application/json",
@@ -63,4 +62,5 @@ const services = () => {
   };
   return { postRequest };
 };
+
 export default services;

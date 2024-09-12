@@ -18,7 +18,7 @@ const useAccess = () => {
       );
       if (response)
         if (response?.code == "200") {
-          const { user, tokens } = response.metadata;
+          const { user, tokens } = response.data;
           login(tokens, user);
         }
       return response;
@@ -28,6 +28,7 @@ const useAccess = () => {
       setIsLoading(false);
     }
   };
+
   const loginUser = async (values) => {
     try {
       setIsLoading(true);
@@ -36,7 +37,7 @@ const useAccess = () => {
         JSON.stringify(values)
       );
       if (response?.code == "200") {
-        const { user, tokens } = response.metadata;
+        const { user, tokens } = response.data;
         login(tokens, user);
       }
       return response;
@@ -46,6 +47,26 @@ const useAccess = () => {
       setIsLoading(false);
     }
   };
+
+  const verifySignup = async (values) => {
+    try {
+      setIsLoading(true);
+      const response = await postRequest(
+        `${baseUrl}/verify-signup`,
+        JSON.stringify(values)
+      );
+      if (response?.code == "201") {
+        const { user, tokens } = response.data;
+        login(tokens, user);
+      }
+      return response;
+    } catch (e) {
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const signUp = async (values) => {
     try {
       setIsLoading(true);
@@ -53,10 +74,6 @@ const useAccess = () => {
         `${baseUrl}/signup`,
         JSON.stringify(values)
       );
-      if (response?.code == "201") {
-        const { user, tokens } = response.metadata;
-        login(tokens, user);
-      }
       return response;
     } catch (e) {
       return null;
@@ -84,11 +101,12 @@ const useAccess = () => {
       setIsLoading(false);
     }
   };
-  const sendOtp = async (value) => {
+
+  const forgotPassword = async (value) => {
     try {
       setIsLoading(true);
       const response = await postRequest(
-        `${baseUrl}/send-otp`,
+        `${baseUrl}/forgot-password`,
         JSON.stringify(value)
       );
       return response;
@@ -98,11 +116,12 @@ const useAccess = () => {
       setIsLoading(false);
     }
   };
-  const forgotPassword = async (value) => {
+  
+  const verifyForgotPassword = async (value) => {
     try {
       setIsLoading(true);
       const response = await postRequest(
-        `${baseUrl}/forgot-password`,
+        `${baseUrl}/verify-forgot-password`,
         JSON.stringify(value)
       );
       return response;
@@ -145,10 +164,11 @@ const useAccess = () => {
     loginUser,
     resetPassword,
     signUp,
+    verifySignup,
     logoutUser,
     loginUserWithOAuth,
-    sendOtp,
     forgotPassword,
+    verifyForgotPassword
   };
 };
 

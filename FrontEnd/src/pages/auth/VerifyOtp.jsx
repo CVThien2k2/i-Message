@@ -1,23 +1,19 @@
-import React, { useState } from "react";
 import {
-  Title,
-  PinInput,
-  Paper,
-  rem,
-  LoadingOverlay,
-  Container,
-  Center,
-  Button,
-  Group,
-  Box,
   Anchor,
+  Button,
+  Container,
+  LoadingOverlay,
+  Paper,
+  PinInput,
+  rem,
   Text,
+  Title
 } from "@mantine/core";
-import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
-import useAccess from "../../hooks/useAuth";
 import { useForm } from "@mantine/form";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { IconArrowRight } from "@tabler/icons-react";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import useAccess from "../../hooks/useAuth";
 import useNotify from "../../hooks/useNotify";
 
 const VerifyOtp = () => {
@@ -25,7 +21,7 @@ const VerifyOtp = () => {
   const navigate = useNavigate();
   const [disabled, setDisable] = useState(true);
   const [timer, setTimer] = useState(60);
-  const { isLoading, signUp, forgotPassword, resendOTP } = useAccess();
+  const { isLoading, verifySignup, verifyForgotPassword, resendOTP } = useAccess();
   const [searchParams] = useSearchParams();
   const form = useForm({
     initialValues: {
@@ -38,6 +34,7 @@ const VerifyOtp = () => {
       otp: (val) => (val.length < 6 ? "Nhập đủ mã xác thực" : null),
     },
   });
+
   const handleResendOtp = async (e) => {
     e.preventDefault();
     if (disabled) return;
@@ -53,6 +50,7 @@ const VerifyOtp = () => {
       }
     }
   };
+
   React.useEffect(() => {
     let interval = setInterval(() => {
       setTimer((lastTimerCount) => {
@@ -64,6 +62,7 @@ const VerifyOtp = () => {
     }, 1000);
     return () => clearInterval(interval);
   }, [disabled]);
+
   const handleVerify = async (e) => {
     e.preventDefault();
     const isValid = form.validate();
@@ -72,26 +71,27 @@ const VerifyOtp = () => {
     } else {
       const { type, ...value } = form.values;
       if (type == "signup") {
-        const response = await signUp(value);
+        const response = await verifySignup(value);
         if (response) {
           if (response.code == "201") {
-            notifyResult("Đăng ký thành công", "Đang tải trang chủ", true);
+            notifyResult("Đăng ký thành công", "Chuyển hướng về trang chủ", true);
             navigate("/dashboard");
           } else {
             notifyResult("Có lỗi xảy ra", response.message, false);
           }
-        } else notifyResult("Connect Error!", null, true);
+        } else notifyResult("Có lỗi xảy ra khi kết nối tới máy chủ", null, true);
       } else if (type == "forgot-password") {
-        const response = await forgotPassword(value);
+        const response = await verifyForgotPassword(value);
         if (response) {
           if (response.code == "200") {
             notifyResult("Xác minh thành công", "Đã xác minh mã OTP", true);
-            navigate(`/reset-password?token=${response.metadata.token}`);
+            navigate(`/reset-password?token=${response.data.token}`);
           } else notifyResult("Có lỗi xảy ra", response.message, false);
-        } else notifyResult("Connect Error!", null, true);
+        } else notifyResult("Có lỗi xảy ra khi kết nối tới máy chủ", null, true);
       }
     }
   };
+
   useEffect(() => {
     const setParams = async () => {
       const token = searchParams.get("token");
@@ -108,6 +108,7 @@ const VerifyOtp = () => {
 
     setParams();
   }, [searchParams, navigate]);
+
   return (
     <form onSubmit={handleVerify}>
       <Container size={400} my={40}>
@@ -129,7 +130,6 @@ const VerifyOtp = () => {
           <Title order={2} ta={"center"} mb={30}>
             Nhập mã xác nhận
           </Title>
-
           <PinInput
             size="lg"
             length={6}

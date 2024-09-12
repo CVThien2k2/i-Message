@@ -10,5 +10,8 @@ class otpService {
     const otps = await otpModel.find({ user_name: user_name });
     return otps[otps.length - 1];
   };
+  deleteAllOtpByUserName = async ({ user_name }) => {
+    return await otpModel.deleteMany({ user_name: user_name });
+  };
 }
 module.exports = new otpService();

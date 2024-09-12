@@ -21,10 +21,11 @@ import useNotify from "../../hooks/useNotify";
 import useAccess from "../../hooks/useAuth";
 import { baseUrl } from "../../utils/services";
 import { useNavigate } from "react-router-dom";
+
 const Register = () => {
   const navigate = useNavigate();
   const { notifyResult } = useNotify();
-  const { isLoading, sendOtp } = useAccess();
+  const { isLoading, signUp } = useAccess();
 
   const form = useForm({
     initialValues: {
@@ -35,7 +36,6 @@ const Register = () => {
       doB: "",
       gender: null,
       repassword: "",
-      type: "signup",
     },
     validateInputOnBlur: true,
     validate: {
@@ -56,6 +56,7 @@ const Register = () => {
         val === values.password ? null : "Mật khẩu không khớp",
     },
   });
+
   const handleSignUp = async (e) => {
     e.preventDefault();
     const { repassword, ...value } = form.values;
@@ -68,14 +69,15 @@ const Register = () => {
         user_name = user_name.substring(1);
         user_name = `84${user_name}`;
       }
-    const response = await sendOtp({ ...value, user_name: user_name });
+    const response = await signUp({...value, user_name: user_name });
     if (response)
       if (response.code == "200") {
-        notifyResult("Đăng ký", response.message, true);
-        navigate(`/verify-otp?token=${response.metadata.token}&type=signup`);
+        notifyResult("Gửi đăng ký thành công", response.message, true);
+        navigate(`/verify-otp?token=${response.data.token}&type=signup`);
       } else notifyResult("Đăng ký", response.message, false);
-    else notifyResult("ERROR SERVER", null, false);
+    else notifyResult("Có lỗi xảy ra khi kết nối tới máy chủ", null, false);
   };
+
   return (
     <>
       <form onSubmit={handleSignUp}>
@@ -209,4 +211,5 @@ const Register = () => {
     </>
   );
 };
+
 export default Register;

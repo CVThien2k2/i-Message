@@ -15,57 +15,6 @@ export function Dashboard() {
   return (
     <>
       <Header />
-      {/* <Container className={classes.wrapper} size={1400}>
-        <div className={classes.inner}>
-          <Title className={classes.title}>
-            Tham gia iMessage{" "}
-            <Text component="span" className={classes.highlight} inherit>
-              để có thể
-            </Text>{" "}
-            trò chuyện với mọi người!
-          </Title>
-
-          <div className={classes.controls}>
-            {isAuthenticated ? (
-              <Button
-                className={classes.control}
-                size="lg"
-                variant="default"
-                color="gray"
-                loading={isLoading}
-                onClick={() => {
-                  logoutUser();
-                }}
-              >
-                Đăng xuất
-              </Button>
-            ) : (
-              <>
-                <Button
-                  className={classes.control}
-                  size="lg"
-                  variant="default"
-                  color="gray"
-                  onClick={() => {
-                    navigate("/login");
-                  }}
-                >
-                  Đăng nhập
-                </Button>
-                <Button
-                  className={classes.control}
-                  size="lg"
-                  onClick={() => {
-                    navigate("/signup");
-                  }}
-                >
-                  Đăng ký
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </Container>{" "} */}
       <Feature />
       <Footer />
     </>

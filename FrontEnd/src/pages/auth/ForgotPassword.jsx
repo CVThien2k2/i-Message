@@ -17,14 +17,16 @@ import classes from "../../styles/ForgotPassword.module.css";
 import { useNavigate } from "react-router-dom";
 import useAccess from "../../hooks/useAuth";
 import useNotify from "../../hooks/useNotify";
+
 export function ForgotPassword() {
-  const { isLoading, sendOtp } = useAccess();
+
+  const { isLoading, forgotPassword } = useAccess();
   const navigate = useNavigate();
   const { notifyResult } = useNotify();
+
   const form = useForm({
     initialValues: {
-      user_name: "",
-      type: "forgot-password",
+      user_name: ""
     },
     validateInputOnBlur: true,
     validate: {
@@ -37,6 +39,7 @@ export function ForgotPassword() {
           : "Email hoặc số điện thoại không đúng định dạng",
     },
   });
+
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     let user_name = form.values.user_name;
@@ -47,16 +50,17 @@ export function ForgotPassword() {
         user_name = user_name.substring(1);
         user_name = `84${user_name}`;
       }
-    const response = await sendOtp({ ...form.values, user_name: user_name });
+    const response = await forgotPassword({ user_name: user_name });
     if (response)
       if (response.code == "200") {
-        notifyResult("Quên mật khẩu", response.message, true);
+        notifyResult("Yêu cầu thành công", response.message, true);
         navigate(
-          `/verify-otp?token=${response.metadata.token}&type=forgot-password`
+          `/verify-otp?token=${response.data.token}&type=forgot-password`
         );
-      } else notifyResult("Quên mật khẩu", response.message, false);
-    else notifyResult("ERROR SERVER", null, false);
+      } else notifyResult("Có lỗi xảy ra", response.message, false);
+    else notifyResult("Có lỗi xảy ra khi kết nối tới máy chủ", null, false);
   };
+  
   return (
     <form onSubmit={handleForgotPassword}>
       <Container size={400} my={30}>

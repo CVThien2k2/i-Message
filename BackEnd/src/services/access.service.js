@@ -338,7 +338,7 @@ class accessService {
       upperCaseAlphabets: false,
       specialChars: false,
     });
-    await otpService.deleteMany({ user_name: data.user_name });
+    await otpService.deleteAllOtpByUserName({ user_name: data.user_name });
     const newOtp = await otpService.createOtp({
       user_name: data.user_name,
       otp: otp,
