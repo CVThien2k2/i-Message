@@ -2,7 +2,7 @@
 //http://localhost:8081/api/v1
 //https://chatrealtime-api.onrender.com/api/v1
 // src/config.js
-export const baseUrl = "https://imessage-api.vercel.app";
+export const baseUrl = "https://imessage-api.vercel.app/v1";
 
 import { useAuth } from "../context";
 import useNotify from "../hooks/useNotify";
